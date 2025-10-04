@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Język Polski</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #ffecd2, #fcb69f);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+#question-container {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    background-color: rgba(255,255,255,0.85);
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.question {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Animacje tła */
+.star, .letter, .balloon {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.star {
+    width: 5px;
+    height: 5px;
+    background: yellow;
+    border-radius: 50%;
+    animation: fall 5s linear infinite;
+}
+
+.letter {
+    font-size: 20px;
+    color: #ff6666;
+    animation: float 6s linear infinite;
+}
+
+.balloon {
+    width: 20px;
+    height: 30px;
+    background-color: #ff3399;
+    border-radius: 50% 50% 50% 50%;
+    animation: rise 7s linear infinite;
+}
+
+@keyframes fall {
+    0% {top: -10px;}
+    100% {top: 100vh;}
+}
+
+@keyframes float {
+    0% {top: -20px; transform: rotate(0deg);}
+    100% {top: 100vh; transform: rotate(360deg);}
+}
+
+@keyframes rise {
+    0% {bottom: -30px;}
+    100% {bottom: 100vh;}
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+    <div class="question" id="question">Pytanie</div>
+    <input type="text" id="answer" placeholder="Twoja odpowiedź">
+    <button onclick="checkAnswer()">Sprawdź</button>
+    <div id="result"></div>
+    <a href="index.html">⬅ Powrót do strony głównej</a>
+</div>
+
+<script>
+// Przykładowe pytania z Polski (wypełnij 200-400 pytań dla klas 6-8)
+const questions = [
+{q:"Podaj czasownik w zdaniu: 'Ona czyta książkę codziennie.'", a:"czyta"},
+{q:"Podaj rzeczownik w zdaniu: 'Samochód jedzie szybko.'", a:"Samochód"},
+{q:"Podaj przymiotnik w zdaniu: 'To była piękna pogoda.'", a:"piękna"},
+{q:"Podaj przysłówek w zdaniu: 'On biega bardzo szybko.'", a:"bardzo szybko"},
+{q:"Podaj liczbę mnogą: 'drzewo'", a:"drzewa"},
+{q:"Zaznacz wyraz wielką literą: 'kraków jest piękny.'", a:"Kraków"},
+{q:"Podaj formę czasu przeszłego: 'pisze'", a:"pisał"},
+{q:"Podaj antonim do słowa 'wysoki'", a:"niski"},
+{q:"Podaj synonim do słowa 'szybki'", a:"prędki"},
+{q:"Wskaż podmiot: 'Kasia lubi lody.'", a:"Kasia"},
+{q:"Wskaż orzeczenie: 'Chłopiec biega po parku.'", a:"biega"},
+{q:"Podaj poprawną formę: 'Ja (czytać) książkę.'", a:"czytam"},
+{q:"Podaj czasownik w zdaniu: 'Ptaki śpiewają rano.'", a:"śpiewają"},
+{q:"Podaj rzeczownik w zdaniu: 'Kot wspina się na drzewo.'", a:"Kot"},
+{q:"Podaj przymiotnik w zdaniu: 'To był długi dzień.'", a:"długi"},
+{q:"Podaj przysłówek w zdaniu: 'On śpiewa pięknie.'", a:"pięknie"},
+{q:"Podaj liczbę mnogą: 'pies'", a:"psy"},
+{q:"Zaznacz wyraz wielką literą: 'wrocław leży nad odrą.'", a:"Wrocław"},
+{q:"Podaj formę czasu przyszłego: 'biegać'", a:"będzie biegać"},
+{q:"Podaj antonim do słowa 'ciemny'", a:"jasny"},
+{q:"Podaj synonim do słowa 'ładny'", a:"piękny"},
+{q:"Wskaż podmiot: 'Ania gotuje obiad.'", a:"Ania"},
+{q:"Wskaż orzeczenie: 'Samochód jedzie szybko.'", a:"jedzie"},
+{q:"Podaj poprawną formę: 'Ty (czytać) książkę.'", a:"czytasz"},
+{q:"Podaj czasownik w zdaniu: 'Dzieci bawią się na podwórku.'", a:"bawią się"},
+{q:"Podaj rzeczownik w zdaniu: 'Pies szczeka głośno.'", a:"Pies"},
+{q:"Podaj przymiotnik w zdaniu: 'Mamy ciepły dom.'", a:"ciepły"},
+{q:"Podaj przysłówek w zdaniu: 'Ona śpiewa głośno.'", a:"głośno"},
+{q:"Podaj liczbę mnogą: 'jabłko'", a:"jabłka"},
+{q:"Zaznacz wyraz wielką literą: 'gdynia jest nad morzem.'", a:"Gdynia"},
+{q:"Podaj formę czasu przeszłego: 'biegnie'", a:"biegł"},
+{q:"Podaj antonim do słowa 'zimny'", a:"ciepły"},
+{q:"Podaj synonim do słowa 'mądry'", a:"rozsądny"},
+{q:"Wskaż podmiot: 'Marek czyta gazetę.'", a:"Marek"},
+{q:"Wskaż orzeczenie: 'Ptaki latają nad jeziorem.'", a:"latają"},
+{q:"Podaj poprawną formę: 'On (pisać) list.'", a:"pisze"},
+{q:"Podaj czasownik w zdaniu: 'Dziecko śpi w łóżku.'", a:"śpi"},
+{q:"Podaj rzeczownik w zdaniu: 'Samochód stoi na parkingu.'", a:"Samochód"},
+{q:"Podaj przymiotnik w zdaniu: 'Mamy nowy komputer.'", a:"nowy"},
+{q:"Podaj przysłówek w zdaniu: 'Ona mówi cicho.'", a:"cicho"},
+{q:"Podaj liczbę mnogą: 'książka'", a:"książki"},
+{q:"Zaznacz wyraz wielką literą: 'poznań leży nad wartą.'", a:"Poznań"},
+{q:"Podaj formę czasu przyszłego: 'czytać'", a:"będzie czytać"},
+{q:"Podaj antonim do słowa 'szybki'", a:"wolny"},
+{q:"Podaj synonim do słowa 'smutny'", a:"przygnębiony"},
+{q:"Wskaż podmiot: 'Basia rysuje obraz.'", a:"Basia"},
+{q:"Wskaż orzeczenie: 'Chłopiec je kanapkę.'", a:"je"},
+{q:"Podaj poprawną formę: 'Ja (biegać) codziennie.'", a:"biegam"},
+{q:"Podaj czasownik w zdaniu: 'Oni uczą się pilnie.'", a:"uczą się"},
+{q:"Podaj rzeczownik w zdaniu: 'Kot śpi na kanapie.'", a:"Kot"},
+{q:"Podaj przymiotnik w zdaniu: 'To było trudne zadanie.'", a:"trudne"},
+{q:"Podaj przysłówek w zdaniu: 'Ona pracuje sumiennie.'", a:"sumiennie"},
+{q:"Podaj liczbę mnogą: 'krzesło'", a:"krzesła"},
+{q:"Zaznacz wyraz wielką literą: 'lublin jest piękny.'", a:"Lublin"},
+{q:"Podaj formę czasu przeszłego: 'śpiewa'", a:"śpiewał"},
+{q:"Podaj antonim do słowa 'głośny'", a:"cichy"},
+{q:"Podaj synonim do słowa 'ładny'", a:"piękny"},
+{q:"Wskaż podmiot: 'Tomek pisze wypracowanie.'", a:"Tomek"},
+{q:"Wskaż orzeczenie: 'Pies biega po ogrodzie.'", a:"biega"},
+{q:"Podaj poprawną formę: 'Ty (czytać) gazetę.'", a:"czytasz"},
+{q:"Podaj czasownik w zdaniu: 'Dzieci skaczą w kałużach.'", a:"skaczą"},
+{q:"Podaj rzeczownik w zdaniu: 'Samolot leci wysoko.'", a:"Samolot"},
+{q:"Podaj przymiotnik w zdaniu: 'Mamy piękny ogród.'", a:"piękny"},
+{q:"Podaj przysłówek w zdaniu: 'On gra dobrze.'", a:"dobrze"},
+{q:"Podaj liczbę mnogą: 'kot'", a:"koty"},
+{q:"Zaznacz wyraz wielką literą: 'szczecin leży nad odrą.'", a:"Szczecin"},
+{q:"Podaj formę czasu przyszłego: 'śpiewać'", a:"będzie śpiewać"},
+{q:"Podaj antonim do słowa 'nowy'", a:"stary"},
+{q:"Podaj synonim do słowa 'piękny'", a:"ładny"},
+{q:"Wskaż podmiot: 'Maja gotuje obiad.'", a:"Maja"},
+{q:"Wskaż orzeczenie: 'Chłopiec je jabłko.'", a:"je"},
+{q:"Podaj poprawną formę: 'Ja (pisać) wypracowanie.'", a:"piszę"},
+{q:"Podaj czasownik w zdaniu: 'Ptaki odlatują na zimę.'", a:"odlatują"},
+{q:"Podaj rzeczownik w zdaniu: 'Drzewo rośnie w lesie.'", a:"Drzewo"},
+{q:"Podaj przymiotnik w zdaniu: 'Mamy spokojną okolicę.'", a:"spokojną"},
+{q:"Podaj przysłówek w zdaniu: 'Ona uczy się pilnie.'", a:"pilnie"},
+{q:"Podaj liczbę mnogą: 'pies'", a:"psy"},
+{q:"Zaznacz wyraz wielką literą: 'bydgoszcz leży nad brdą.'", a:"Bydgoszcz"},
+{q:"Podaj formę czasu przeszłego: 'gotuje'", a:"gotował"},
+{q:"Podaj antonim do słowa 'duży'", a:"mały"},
+{q:"Podaj synonim do słowa 'smaczny'", a:"pyszny"},
+{q:"Wskaż podmiot: 'Ola czyta książkę.'", a:"Ola"},
+{q:"Wskaż orzeczenie: 'Kot śpi na kanapie.'", a:"śpi"},
+{q:"Podaj poprawną formę: 'Ty (biegać) codziennie.'", a:"biegasz"},
+{q:"Podaj czasownik w zdaniu: 'Dzieci bawią się w ogrodzie.'", a:"bawią się"},
+{q:"Podaj rzeczownik w zdaniu: 'Samochód stoi na drodze.'", a:"Samochód"},
+{q:"Podaj przymiotnik w zdaniu: 'Mamy kolorowy pokój.'", a:"kolorowy"},
+{q:"Podaj przysłówek w zdaniu: 'On mówi wyraźnie.'", a:"wyraźnie"},
+{q:"Podaj liczbę mnogą: 'jabłko'", a:"jabłka"},
+{q:"Zaznacz wyraz wielką literą: 'katowice leżą w śląsku.'", a:"Katowice"},
+{q:"Podaj formę czasu przyszłego: 'biegać'", a:"będzie biegać"},
+{q:"Podaj antonim do słowa 'ciepły'", a:"zimny"},
+{q:"Podaj synonim do słowa 'szybki'", a:"prędki"},
+{q:"Wskaż podmiot: 'Piotr rysuje obraz.'", a:"Piotr"},
+{q:"Wskaż orzeczenie: 'Pies szczeka głośno.'", a:"szczeka"},
+{q:"Podaj poprawną formę: 'Ja (czytać) książkę.'", a:"czytam"},
+{q:"Podaj czasownik w zdaniu: 'Oni biegają w parku.'", a:"biegają"},
+{q:"Podaj rzeczownik w zdaniu: 'Drzewo ma liście.'", a:"Drzewo"},
+{q:"Podaj przymiotnik w zdaniu: 'To była trudna lekcja.'", a:"trudna"},
+{q:"Podaj przysłówek w zdaniu: 'Ona śpiewa pięknie.'", a:"pięknie"},
+{q:"Podaj liczbę mnogą: 'krzesło'", a:"krzesła"},
+{q:"Zaznacz wyraz wielką literą: 'gdańsk leży nad morzem.'", a:"Gdańsk"},
+{q:"Podaj formę czasu przeszłego: 'czyta'", a:"czytał"},
+{q:"Podaj antonim do słowa 'jasny'", a:"ciemny"},
+{q:"Podaj synonim do słowa 'mądry'", a:"rozsądny"},
+{q:"Wskaż podmiot: 'Ala gotuje zupę.'", a:"Ala"},
+{q:"Wskaż orzeczenie: 'Chłopiec czyta książkę.'", a:"czyta"},
+{q:"Podaj poprawną formę: 'Ty (pisać) wypracowanie.'", a:"piszesz"},
+{q:"Podaj czasownik w zdaniu: 'Dzieci uczą się pilnie.'", a:"uczą się"},
+{q:"Podaj rzeczownik w zdaniu: 'Kot poluje na mysz.'", a:"Kot"},
+{q:"Podaj przymiotnik w zdaniu: 'Mamy duży ogród.'", a:"duży"},
+{q:"Podaj przysłówek w zdaniu: 'On pracuje sumiennie.'", a:"sumiennie"},
+{q:"Podaj liczbę mnogą: 'pies'", a:"psy"},
+{q:"Zaznacz wyraz wielką literą: 'warszawa jest stolicą.'", a:"Warszawa"},
+{q:"Podaj formę czasu przyszłego: 'gotować'", a:"będzie gotować"},
+{q:"Podaj antonim do słowa 'wolny'", a:"szybki"},
+{q:"Podaj synonim do słowa 'piękny'", a:"ładny"},
+{q:"Wskaż podmiot: 'Tomek maluje obraz.'", a:"Tomek"},
+{q:"Wskaż orzeczenie: 'Samochód jedzie szybko.'", a:"jedzie"},
+{q:"Podaj poprawną formę: 'Ja (biegać) codziennie.'", a:"biegam"},
+{q:"Podaj czasownik w zdaniu: 'Oni śpiewają piosenkę.'", a:"śpiewają"},
+{q:"Podaj rzeczownik w zdaniu: 'Drzewo kwitnie wiosną.'", a:"Drzewo"},
+{q:"Podaj przymiotnik w zdaniu: 'Mamy piękną sukienkę.'", a:"piękną"},
+{q:"Podaj przysłówek w zdaniu: 'Ona mówi cicho.'", a:"cicho"},
+{q:"Podaj liczbę mnogą: 'jabłko'", a:"jabłka"}
+];
+
+
+let currentQuestion;
+
+function getRandomQuestion() {
+    const index = Math.floor(Math.random() * questions.length);
+    currentQuestion = questions[index];
+    document.getElementById('question').textContent = currentQuestion.q;
+    document.getElementById('answer').value = "";
+    document.getElementById('result').textContent = "";
+}
+
+function checkAnswer() {
+    const userAnswer = document.getElementById('answer').value.trim();
+    const result = document.getElementById('result');
+    if(userAnswer.toLowerCase() === currentQuestion.a.toLowerCase()) {
+        result.textContent = "🎉 Brawo! Poprawna odpowiedź!";
+        result.style.color = "green";
+        getRandomQuestion();
+    } else {
+        result.textContent = "❌ Niepoprawnie, spróbuj jeszcze raz.";
+        result.style.color = "red";
+    }
+}
+
+getRandomQuestion();
+
+// Animacje tła
+function createStar() {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    star.style.left = Math.random() * window.innerWidth + 'px';
+    star.style.animationDuration = 3 + Math.random() * 3 + 's';
+    document.body.appendChild(star);
+    setTimeout(()=>{ star.remove(); }, 6000);
+}
+
+function createLetter() {
+    const letters = 'abcdefghijklmnoprstuwxyz';
+    const letter = document.createElement('div');
+    letter.classList.add('letter');
+    letter.textContent = letters[Math.floor(Math.random() * letters.length)];
+    letter.style.left = Math.random() * window.innerWidth + 'px';
+    letter.style.animationDuration = 3 + Math.random() * 3 + 's';
+    document.body.appendChild(letter);
+    setTimeout(()=>{ letter.remove(); }, 6000);
+}
+
+function createBalloon() {
+    const balloon = document.createElement('div');
+    balloon.classList.add('balloon');
+    balloon.style.left = Math.random() * window.innerWidth + 'px';
+    balloon.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+    document.body.appendChild(balloon);
+    setTimeout(()=>{ balloon.remove(); }, 7000);
+}
+
+setInterval(createStar, 300);
+setInterval(createLetter, 500);
+setInterval(createBalloon, 1000);
+
+</script>
+</body>
+</html>

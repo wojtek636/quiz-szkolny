@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matematyka</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+#question-container {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    background-color: rgba(255,255,255,0.85);
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.question {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Animacje tła */
+.star, .symbol, .balloon {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.star {
+    width: 5px;
+    height: 5px;
+    background: yellow;
+    border-radius: 50%;
+    animation: fall 5s linear infinite;
+}
+
+.symbol {
+    font-size: 20px;
+    color: #ff6666;
+    animation: float 6s linear infinite;
+}
+
+.balloon {
+    width: 20px;
+    height: 30px;
+    background-color: #ff3399;
+    border-radius: 50% 50% 50% 50%;
+    animation: rise 7s linear infinite;
+}
+
+@keyframes fall {
+    0% {top: -10px;}
+    100% {top: 100vh;}
+}
+
+@keyframes float {
+    0% {top: -20px; transform: rotate(0deg);}
+    100% {top: 100vh; transform: rotate(360deg);}
+}
+
+@keyframes rise {
+    0% {bottom: -30px;}
+    100% {bottom: 100vh;}
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+    <div class="question" id="question">Pytanie</div>
+    <input type="number" id="answer" placeholder="Twoja odpowiedź">
+    <button onclick="checkAnswer()">Sprawdź</button>
+    <div id="result"></div>
+    <a href="index.html">⬅ Powrót do strony głównej</a>
+</div>
+
+<script>
+// Tablica przykładowych pytań (wypełnij do 200 pytań!)
+const questions = [
+{q:"12 × 8", a:96},{q:"25 + 17", a:42},{q:"144 ÷ 12", a:12},{q:"7 × 9", a:63},{q:"50 − 28", a:22},
+{q:"36 ÷ 6", a:6},{q:"15 × 4", a:60},{q:"80 − 45", a:35},{q:"9 × 8", a:72},{q:"100 ÷ 25", a:4},
+{q:"120 + 85", a:205},{q:"56 − 29", a:27},{q:"11 × 7", a:77},{q:"81 ÷ 9", a:9},{q:"14 × 6", a:84},
+{q:"95 − 38", a:57},{q:"45 ÷ 5", a:9},{q:"18 × 3", a:54},{q:"60 + 27", a:87},{q:"72 − 19", a:53},
+{q:"8 × 12", a:96},{q:"13 × 7", a:91},{q:"90 − 34", a:56},{q:"36 ÷ 6", a:6},{q:"16 × 5", a:80},
+{q:"48 + 37", a:85},{q:"100 − 47", a:53},{q:"9 × 11", a:99},{q:"121 ÷ 11", a:11},{q:"17 × 6", a:102},
+{q:"68 − 29", a:39},{q:"7 × 8", a:56},{q:"84 ÷ 12", a:7},{q:"33 + 47", a:80},{q:"90 − 27", a:63},
+{q:"6 × 9", a:54},{q:"72 ÷ 8", a:9},{q:"18 + 36", a:54},{q:"50 − 19", a:31},{q:"14 × 5", a:70},
+{q:"60 ÷ 12", a:5},{q:"23 + 77", a:100},{q:"88 − 39", a:49},{q:"12 × 7", a:84},{q:"81 ÷ 9", a:9},
+{q:"15 + 26", a:41},{q:"70 − 33", a:37},{q:"9 × 6", a:54},{q:"48 ÷ 6", a:8},{q:"27 + 18", a:45},
+{q:"100 − 56", a:44},{q:"16 × 4", a:64},{q:"64 ÷ 8", a:8},{q:"11 × 8", a:88},{q:"72 ÷ 9", a:8},
+{q:"34 + 56", a:90},{q:"95 − 47", a:48},{q:"7 × 13", a:91},{q:"91 ÷ 13", a:7},{q:"18 + 47", a:65},
+{q:"100 − 33", a:67},{q:"9 × 12", a:108},{q:"108 ÷ 9", a:12},{q:"36 + 28", a:64},{q:"70 − 29", a:41},
+{q:"16 × 6", a:96},{q:"96 ÷ 8", a:12},{q:"23 + 54", a:77},{q:"88 − 39", a:49},{q:"8 × 11", a:88},
+{q:"88 ÷ 8", a:11},{q:"15 + 27", a:42},{q:"90 − 45", a:45},{q:"12 × 7", a:84},{q:"84 ÷ 12", a:7},
+{q:"33 + 29", a:62},{q:"75 − 28", a:47},{q:"6 × 12", a:72},{q:"72 ÷ 6", a:12},{q:"17 + 36", a:53},
+{q:"100 − 58", a:42},{q:"9 × 9", a:81},{q:"81 ÷ 9", a:9},{q:"24 + 48", a:72},{q:"95 − 39", a:56},
+{q:"16 × 5", a:80},{q:"80 ÷ 8", a:10},{q:"13 × 7", a:91},{q:"91 ÷ 13", a:7},{q:"26 + 35", a:61},
+{q:"88 − 42", a:46},{q:"14 × 6", a:84},{q:"84 ÷ 7", a:12},{q:"33 + 44", a:77},{q:"95 − 39", a:56},
+{q:"18 × 4", a:72},{q:"72 ÷ 8", a:9},{q:"27 + 36", a:63},{q:"85 − 48", a:37},{q:"9 × 11", a:99},
+{q:"99 ÷ 9", a:11},{q:"12 + 29", a:41},{q:"100 − 55", a:45},{q:"8 × 12", a:96},{q:"96 ÷ 12", a:8},
+{q:"24 + 36", a:60},{q:"92 − 47", a:45},{q:"15 × 7", a:105},{q:"105 ÷ 7", a:15},{q:"28 + 33", a:61},
+{q:"90 − 42", a:48},{q:"11 × 9", a:99},{q:"99 ÷ 11", a:9},{q:"18 + 46", a:64},{q:"100 − 57", a:43},
+{q:"9 × 8", a:72},{q:"72 ÷ 9", a:8},{q:"27 + 36", a:63},{q:"88 − 39", a:49},{q:"14 × 5", a:70},
+{q:"70 ÷ 10", a:7},{q:"24 + 48", a:72},{q:"95 − 38", a:57},{q:"12 × 7", a:84},{q:"84 ÷ 12", a:7},
+{q:"33 + 29", a:62},{q:"75 − 27", a:48},{q:"6 × 12", a:72},{q:"72 ÷ 6", a:12},{q:"17 + 36", a:53},
+{q:"100 − 58", a:42},{q:"9 × 9", a:81},{q:"81 ÷ 9", a:9},{q:"24 + 48", a:72},{q:"95 − 39", a:56},
+{q:"16 × 5", a:80},{q:"80 ÷ 8", a:10}
+];
+
+
+let currentQuestion;
+
+function getRandomQuestion() {
+    const index = Math.floor(Math.random() * questions.length);
+    currentQuestion = questions[index];
+    document.getElementById('question').textContent = currentQuestion.q;
+    document.getElementById('answer').value = "";
+    document.getElementById('result').textContent = "";
+}
+
+function checkAnswer() {
+    const userAnswer = document.getElementById('answer').value;
+    const result = document.getElementById('result');
+    if(userAnswer == currentQuestion.a) {
+        result.textContent = "🎉 Brawo! Poprawna odpowiedź!";
+        result.style.color = "green";
+        getRandomQuestion();
+    } else {
+        result.textContent = "❌ Niepoprawnie, spróbuj jeszcze raz.";
+        result.style.color = "red";
+    }
+}
+
+getRandomQuestion();
+
+// Animacje tła
+function createStar() {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    star.style.left = Math.random() * window.innerWidth + 'px';
+    star.style.animationDuration = 3 + Math.random() * 3 + 's';
+    document.body.appendChild(star);
+    setTimeout(()=>{ star.remove(); }, 6000);
+}
+
+function createSymbol() {
+    const symbols = ['+', '-', '×', '÷'];
+    const symbol = document.createElement('div');
+    symbol.classList.add('symbol');
+    symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    symbol.style.left = Math.random() * window.innerWidth + 'px';
+    symbol.style.animationDuration = 3 + Math.random() * 3 + 's';
+    document.body.appendChild(symbol);
+    setTimeout(()=>{ symbol.remove(); }, 6000);
+}
+
+function createBalloon() {
+    const balloon = document.createElement('div');
+    balloon.classList.add('balloon');
+    balloon.style.left = Math.random() * window.innerWidth + 'px';
+    balloon.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+    document.body.appendChild(balloon);
+    setTimeout(()=>{ balloon.remove(); }, 7000);
+}
+
+// Generowanie animacji co 300ms
+setInterval(createStar, 300);
+setInterval(createSymbol, 500);
+setInterval(createBalloon, 1000);
+
+</script>
+</body>
+</html>

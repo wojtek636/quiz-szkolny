@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plastyka – Pytania</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #fdf6e3;
+  position: relative;
+}
+#question-container {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  background-color: rgba(255,255,255,0.9);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #ff5722;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #e64a19; }
+
+/* Rozpryski farby */
+.paint {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: splash linear infinite;
+}
+@keyframes splash {
+  0% { transform: translateY(0) scale(0.5); opacity:0.8; }
+  50% { transform: translateY(-80vh) scale(1.5); opacity:0.5; }
+  100% { transform: translateY(0) scale(0.5); opacity:0.8; }
+}
+
+/* Pędzle */
+.brush {
+  position: absolute;
+  font-size: 30px;
+  animation: float linear infinite;
+}
+@keyframes float {
+  0% { transform: translateX(-10vw) rotate(0deg); }
+  100% { transform: translateX(110vw) rotate(360deg); }
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+  <h2 id="question">Ładowanie pytania...</h2>
+  <input type="text" id="answer" placeholder="Twoja odpowiedź">
+  <br>
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="feedback"></div>
+  <br>
+  <button onclick="window.location.href='index.html'">⬅ Powrót do strony głównej</button>
+</div>
+
+<script>
+// Rozpryski farby
+for(let i=0;i<30;i++){
+  let paint = document.createElement('div');
+  paint.className = 'paint';
+  let size = 10 + Math.random()*30;
+  paint.style.width = size + 'px';
+  paint.style.height = size + 'px';
+  paint.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 50%)`;
+  paint.style.left = Math.random()*100 + 'vw';
+  paint.style.animationDuration = (4 + Math.random()*5) + 's';
+  document.body.appendChild(paint);
+}
+
+// Pędzle
+for(let i=0;i<10;i++){
+  let brush = document.createElement('div');
+  brush.className = 'brush';
+  brush.textContent = '🖌️';
+  brush.style.top = Math.random()*60 + 'vh';
+  brush.style.animationDuration = (8 + Math.random()*8) + 's';
+  document.body.appendChild(brush);
+}
+
+// Pytania plastyczne
+const questions = [
+{ q: "Co to jest perspektywa w malarstwie?", a: "sposób przedstawiania przestrzeni" },
+{ q: "Co to jest kompozycja?", a: "układ elementów w dziele" },
+{ q: "Co to jest linia w rysunku?", a: "podstawowy środek wyrazu plastycznego" },
+{ q: "Co to jest kolor podstawowy?", a: "czerwony" },
+{ q: "Wymień pozostałe kolory podstawowe.", a: "niebieski i żółty" },
+{ q: "Co to jest kolor pochodny?", a: "powstaje z mieszania kolorów podstawowych" },
+{ q: "Co to jest tonacja?", a: "nastrojowa wartość kolorystyczna" },
+{ q: "Co to jest kontrast?", a: "przeciwstawienie elementów dla efektu wizualnego" },
+{ q: "Co to jest światłocień?", a: "cieniowanie w celu nadania objętości" },
+{ q: "Co to jest faktura?", a: "właściwości powierzchni dzieła" },
+{ q: "Co to jest linia horyzontu?", a: "linia oddzielająca ziemię od nieba" },
+{ q: "Co to jest martwa natura?", a: "przedstawienie nieożywionych przedmiotów" },
+{ q: "Co to jest pejzaż?", a: "przedstawienie krajobrazu" },
+{ q: "Co to jest portret?", a: "przedstawienie osoby" },
+{ q: "Co to jest impresjonizm?", a: "styl malarski skupiający się na świetle i kolorze" },
+{ q: "Co to jest kubizm?", a: "styl przedstawiający przedmioty w geometrycznych formach" },
+{ q: "Co to jest ekspresjonizm?", a: "styl wyrażający emocje poprzez deformację i kolor" },
+{ q: "Co to jest akwarela?", a: "technika malarska farbami wodnymi" },
+{ q: "Co to jest tempera?", a: "technika malarska farbami łączonymi z żółtkiem lub klejem" },
+{ q: "Co to jest olej?", a: "technika malarska farbami olejnymi" },
+{ q: "Co to jest pastel?", a: "sucha lub olejna kredka do rysunku" },
+{ q: "Co to jest grafika?", a: "technika artystyczna powielająca dzieło" },
+{ q: "Co to jest rzeźba?", a: "trójwymiarowe dzieło plastyczne" },
+{ q: "Co to jest relief?", a: "płaskorzeźba wystająca ponad powierzchnię" },
+{ q: "Co to jest komiks?", a: "opowieść obrazkowa" },
+{ q: "Co to jest collage?", a: "technika łączenia różnych materiałów" },
+{ q: "Co to jest sztych?", a: "rodzaj odbitki graficznej" },
+{ q: "Co to jest linoryt?", a: "grafika wycinana w linoleum" },
+{ q: "Co to jest drzeworyt?", a: "grafika wycinana w drewnie" },
+{ q: "Co to jest perspektywa linearna?", a: "perspektywa z użyciem linii zbieżnych" },
+{ q: "Co to jest perspektywa powietrzna?", a: "perspektywa z użyciem koloru i światła" },
+{ q: "Co to jest akryl?", a: "farby syntetyczne szybko schnące" },
+{ q: "Co to jest szkic?", a: "wstępny rysunek przygotowawczy" },
+{ q: "Co to jest studium?", a: "ćwiczenie artystyczne nad detalem" },
+{ q: "Co to jest atelier?", a: "pracownia artysty" },
+{ q: "Co to jest ekspozycja?", a: "wystawienie dzieł w galerii" },
+{ q: "Co to jest projekt?", a: "plan graficzny przed wykonaniem dzieła" },
+{ q: "Co to jest proporcja?", a: "wzajemne relacje wielkości elementów" },
+{ q: "Co to jest rytm w sztuce?", a: "powtarzalność elementów dla harmonii" },
+{ q: "Co to jest harmonia?", a: "zgodność i równowaga elementów" },
+{ q: "Co to jest akcent w obrazie?", a: "element przyciągający uwagę" },
+{ q: "Co to jest impresja?", a: "subiektywne wrażenie artysty" },
+{ q: "Co to jest abstrakcja?", a: "dzieło nieprzedstawiające rzeczywistości" },
+{ q: "Co to jest realizm?", a: "styl oddający rzeczywistość wiernie" },
+{ q: "Co to jest symbolizm?", a: "styl używający symboli do przekazu treści" },
+{ q: "Co to jest dekoracja?", a: "upiększenie przestrzeni lub przedmiotu" },
+{ q: "Co to jest ornament?", a: "powtarzalny motyw dekoracyjny" },
+{ q: "Co to jest fresk?", a: "malowidło na mokrym tynku" },
+{ q: "Co to jest mozaika?", a: "obraz z małych kamieni lub szkiełek" },
+{ q: "Co to jest witraż?", a: "obraz ze szklanych elementów połączonych ołowiem" },
+{ q: "Co to jest grafit?", a: "materiał do rysunku w ołówku" },
+{ q: "Co to jest kredka?", a: "narzędzie do rysunku kolorowego" },
+{ q: "Co to jest pastela sucha?", a: "kredka barwna sucha do rysunku" },
+{ q: "Co to jest pastela olejna?", a: "kredka barwna olejna do rysunku" },
+{ q: "Co to jest tempera płynna?", a: "farba łączona z wodą" },
+{ q: "Co to jest papier czerpany?", a: "ręcznie robiony papier artystyczny" },
+{ q: "Co to jest blok rysunkowy?", a: "zestaw papierów do rysunku" },
+{ q: "Co to jest sztaluga?", a: "stojak do malowania" },
+{ q: "Co to jest pędzel?", a: "narzędzie do nakładania farby" },
+{ q: "Co to jest paleta?", a: "mieszanie kolorów" },
+{ q: "Co to jest akwarelka?", a: "farba wodna" },
+{ q: "Co to jest spray?", a: "farba w aerozolu" },
+{ q: "Co to jest marker?", a: "pisak do rysunku" },
+{ q: "Co to jest linijka w rysunku?", a: "narzędzie do rysowania linii prostych" },
+{ q: "Co to jest cyrkiel?", a: "narzędzie do rysowania okręgów" },
+{ q: "Co to jest ołówek 2B?", a: "miękki ołówek do rysunku" },
+{ q: "Co to jest ołówek HB?", a: "standardowy ołówek do szkiców" },
+{ q: "Co to jest grafika komputerowa?", a: "tworzenie obrazów przy użyciu komputera" },
+{ q: "Co to jest projektowanie graficzne?", a: "tworzenie wizualnych komunikatów" },
+{ q: "Co to jest animacja?", a: "ruchomy obraz" },
+{ q: "Co to jest storyboard?", a: "plan animacji lub filmu w obrazach" },
+{ q: "Co to jest technika mieszana?", a: "łączenie różnych technik w jednym dziele" },
+{ q: "Co to jest kolaż cyfrowy?", a: "łączenie zdjęć i obrazów w programie komputerowym" },
+{ q: "Co to jest fotografia artystyczna?", a: "zdjęcia mające wartość artystyczną" },
+{ q: "Co to jest ekspozycja w fotografii?", a: "ilość światła padającego na matrycę lub film" },
+{ q: "Co to jest kompozycja fotograficzna?", a: "układ elementów na zdjęciu" },
+{ q: "Co to jest perspektywa w fotografii?", a: "układ elementów w przestrzeni zdjęcia" },
+{ q: "Co to jest saturacja kolorów?", a: "intensywność barw" },
+{ q: "Co to jest nasycenie?", a: "stopień intensywności koloru" },
+{ q: "Co to jest balans bieli?", a: "dostosowanie kolorów w zdjęciu" },
+{ q: "Co to jest kontrast tonalny?", a: "różnica między jasnymi a ciemnymi elementami" },
+{ q: "Co to jest format obrazu?", a: "rozmiar pliku i proporcje" },
+{ q: "Co to jest JPEG?", a: "format zdjęć skompresowanych" },
+{ q: "Co to jest PNG?", a: "format zdjęć bezstratnych" },
+{ q: "Co to jest TIFF?", a: "format zdjęć wysokiej jakości" },
+{ q: "Co to jest RAW?", a: "surowy format zdjęcia z aparatu" },
+{ q: "Co to jest ekspresja artystyczna?", a: "wyrażanie emocji poprzez sztukę" },
+{ q: "Co to jest impresja w malarstwie?", a: "subiektywne wrażenie artysty" },
+{ q: "Co to jest symbolika w sztuce?", a: "używanie znaków do przekazu treści" },
+{ q: "Co to jest abstrakcjonizm?", a: "sztuka nieprzedstawiająca rzeczywistości" },
+{ q: "Co to jest styl realistyczny?", a: "wierne oddanie rzeczywistości" },
+{ q: "Co to jest ekspresjonizm w plastyce?", a: "przekaz emocji poprzez formę i kolor" },
+{ q: "Co to jest minimalizm?", a: "ograniczenie elementów do niezbędnych" },
+{ q: "Co to jest pop-art?", a: "styl wykorzystujący elementy popkultury" },
+{ q: "Co to jest graffiti?", a: "malarstwo uliczne" },
+{ q: "Co to jest mural?", a: "duży obraz na ścianie budynku" },
+{ q: "Co to jest instalacja artystyczna?", a: "przestrzenne dzieło sztuki" },
+{ q: "Co to jest performance?", a: "działanie artystyczne wykonywane publicznie" },
+{ q: "Co to jest grafika użytkowa?", a: "sztuka służąca komunikacji wizualnej" },
+{ q: "Co to jest typografia?", a: "sztuka projektowania tekstu" },
+{ q: "Co to jest ilustracja?", a: "obraz towarzyszący tekstowi" },
+{ q: "Co to jest szkicownik?", a: "notes do rysowania" },
+{ q: "Co to jest ekspozycja dzieła sztuki?", a: "pokazanie dzieła publicznie" },
+{ q: "Co to jest wystawa?", a: "prezentacja dzieł artystycznych" },
+{ q: "Co to jest muzeum sztuki?", a: "miejsce przechowywania dzieł sztuki" },
+{ q: "Co to jest galeria?", a: "miejsce wystawiania dzieł sztuki" },
+{ q: "Co to jest sztuka nowoczesna?", a: "sztuka powstała w XX i XXI wieku" },
+{ q: "Co to jest sztuka współczesna?", a: "sztuka aktualna, tworząca obecnie" },
+{ q: "Co to jest renesans?", a: "styl artystyczny XV-XVI wieku" },
+{ q: "Co to jest barok?", a: "styl artystyczny XVII-XVIII wieku" },
+{ q: "Co to jest gotyk?", a: "styl architektoniczny średniowieczny" },
+{ q: "Co to jest secesja?", a: "styl artystyczny końca XIX i początku XX wieku" },
+{ q: "Co to jest kubizm w plastyce?", a: "styl wykorzystujący formy geometryczne" },
+{ q: "Co to jest impresjonizm w plastyce?", a: "styl koncentrujący się na świetle i kolorze" }
+
+];
+
+let currentQuestion = 0;
+
+function loadQuestion() {
+  document.getElementById("question").textContent = questions[currentQuestion].q;
+}
+
+function checkAnswer() {
+  let answer = document.getElementById("answer").value.trim().toLowerCase();
+  let feedback = document.getElementById("feedback");
+  if (answer === questions[currentQuestion].a.toLowerCase()) {
+    feedback.textContent = "✅ Dobrze!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "❌ Źle! Poprawna odpowiedź: " + questions[currentQuestion].a;
+    feedback.style.color = "red";
+  }
+  currentQuestion = (currentQuestion + 1) % questions.length;
+  setTimeout(() => {
+    document.getElementById("answer").value = "";
+    loadQuestion();
+  }, 1500);
+}
+
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

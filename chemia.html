@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chemia – Pytania</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(#e0f7fa, #ffffff);
+  position: relative;
+}
+#question-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  background-color: rgba(255,255,255,0.9);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #0288d1;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #01579b; }
+
+/* Bąbelki animowane w tle */
+.bubble {
+  position: absolute;
+  bottom: -50px;
+  font-size: 20px;
+  animation: rise linear infinite;
+  opacity: 0.7;
+}
+@keyframes rise {
+  0% { transform: translateY(0) scale(0.5); opacity:0.7; }
+  100% { transform: translateY(-100vh) scale(1); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+  <h2 id="question">Ładowanie pytania...</h2>
+  <input type="text" id="answer" placeholder="Twoja odpowiedź">
+  <br>
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="feedback"></div>
+  <br>
+  <button onclick="window.location.href='index.html'">⬅ Powrót do strony głównej</button>
+</div>
+
+<script>
+// Tworzenie bąbelków w tle
+for(let i=0;i<30;i++){
+  let bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = '⚗️';
+  bubble.style.left = Math.random() * 100 + 'vw';
+  bubble.style.animationDuration = (4 + Math.random()*6) + 's';
+  bubble.style.fontSize = (15 + Math.random()*30) + 'px';
+  document.body.appendChild(bubble);
+}
+
+// Pytania chemiczne
+const questions = [
+{ q: "Jaki pierwiastek chemiczny ma symbol H?", a: "wodór" },
+{ q: "Jaki pierwiastek chemiczny ma symbol O?", a: "tlen" },
+{ q: "Jaki pierwiastek chemiczny ma symbol C?", a: "węgiel" },
+{ q: "Jak nazywa się proces łączenia się atomów w cząsteczki?", a: "wiązanie chemiczne" },
+{ q: "Jak nazywa się nauka badająca związki chemiczne?", a: "chemia" },
+{ q: "Jak nazywa się reakcja, w której substancja łączy się z tlenem?", a: "spalanie" },
+{ q: "Jak nazywa się reakcja, w której cząsteczka wody ulega rozkładowi?", a: "hydroliza" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Na?", a: "sód" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu K?", a: "potas" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Fe?", a: "żelazo" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Ag?", a: "srebro" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Au?", a: "złoto" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Pb?", a: "ołów" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Hg?", a: "rtęć" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu N?", a: "azot" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu S?", a: "siarka" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Cl?", a: "chlor" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu F?", a: "fluor" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu P?", a: "fosfor" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu He?", a: "hel" },
+{ q: "Jak nazywa się proces rozdzielania substancji na składniki za pomocą filtrowania?", a: "filtracja" },
+{ q: "Jak nazywa się proces przechodzenia cieczy w parę?", a: "parowanie" },
+{ q: "Jak nazywa się proces przechodzenia pary w ciecz?", a: "skraplanie" },
+{ q: "Jak nazywa się proces przechodzenia ciała stałego w gaz?", a: "sublimacja" },
+{ q: "Jak nazywa się proces przechodzenia gazu w ciało stałe?", a: "resublimacja" },
+{ q: "Jak nazywa się reakcja chemiczna, w której jedna substancja zastępuje drugą?", a: "reakcja wymiany" },
+{ q: "Jak nazywa się reakcja chemiczna, w której dwie substancje łączą się w jedną?", a: "reakcja syntezy" },
+{ q: "Jak nazywa się reakcja chemiczna, w której jedna substancja rozkłada się na dwie lub więcej?", a: "rozklad" },
+{ q: "Jak nazywa się roztwór o pH 7?", a: "obojętny" },
+{ q: "Jak nazywa się roztwór o pH < 7?", a: "kwasowy" },
+{ q: "Jak nazywa się roztwór o pH > 7?", a: "zasadowy" },
+{ q: "Jak nazywa się kwas znajdujący się w żołądku?", a: "kwas solny" },
+{ q: "Jak nazywa się substancja neutralizująca kwasy?", a: "zasada" },
+{ q: "Jak nazywa się reakcja kwasu z zasadą?", a: "neutralizacja" },
+{ q: "Jak nazywa się substancja, która przewodzi prąd w roztworze wodnym?", a: "elektrolit" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Mg?", a: "magnez" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Ca?", a: "wapń" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Zn?", a: "cynk" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Cu?", a: "miedź" },
+{ q: "Jak nazywa się gaz niepalny używany w balonach?", a: "hel" },
+{ q: "Jak nazywa się gaz trujący wydzielany przez niepełne spalanie?", a: "tlenek węgla" },
+{ q: "Jak nazywa się proces, w którym tlenki metali reagują z wodą?", a: "wodorotlenki" },
+{ q: "Jak nazywa się roztwór wody z solą kuchenną?", a: "roztwór soli" },
+{ q: "Jak nazywa się podstawowa jednostka chemiczna?", a: "atom" },
+{ q: "Jak nazywa się najmniejsza cząsteczka pierwiastka lub związku chemicznego?", a: "cząsteczka" },
+{ q: "Jak nazywa się nauka badająca reakcje chemiczne w organizmach?", a: "biochemia" },
+{ q: "Jak nazywa się proces spalania glukozy w komórkach?", a: "oddychanie komórkowe" },
+{ q: "Jak nazywa się reakcja chemiczna, w której metal reaguje z kwasem?", a: "wydzielanie wodoru" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Li?", a: "lit" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Br?", a: "brom" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu I?", a: "jod" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Si?", a: "krzem" },
+{ q: "Jak nazywa się pierwiastek chemiczny o symbolu Al?", a: "aluminium" },
+{ q: "Jak nazywa się reakcja chemiczna, w której substancje ulegają spalaniu w tlenie?", a: "reakcja utleniania" },
+{ q: "Jak nazywa się proces rozdzielania substancji za pomocą odparowania rozpuszczalnika?", a: "krystalizacja" },
+{ q: "Jak nazywa się proces oczyszczania wody przez jej gotowanie i skraplanie pary?", a: "destylacja" },
+{ q: "Jak nazywa się reakcja chemiczna, w której metal wypiera inny metal z jego związku?", a: "reakcja wymiany" },
+{ q: "Jak nazywa się reakcja chemiczna zachodząca między kwasem a metalem?", a: "wydzielanie wodoru" },
+{ q: "Jak nazywa się kwas znajdujący się w cytrynie?", a: "kwas cytrynowy" },
+{ q: "Jak nazywa się kwas znajdujący się w occie?", a: "kwas octowy" },
+{ q: "Jak nazywa się gaz powodujący zakwaszenie deszczu?", a: "dwutlenek siarki" },
+{ q: "Jak nazywa się reakcja chemiczna wodorotlenku z kwasem?", a: "neutralizacja" },
+{ q: "Jak nazywa się proces utleniania glukozy do dwutlenku węgla i wody?", a: "oddychanie" },
+{ q: "Jak nazywa się gaz, którego brak powoduje duszenie się?", a: "tlen" },
+{ q: "Jak nazywa się gaz, którego nadmiar w powietrzu powoduje efekt cieplarniany?", a: "dwutlenek węgla" },
+{ q: "Jak nazywa się gaz używany w żarówkach fluorescencyjnych?", a: "argon" },
+{ q: "Jak nazywa się gaz szkodliwy dla ozonu?", a: "freon" },
+{ q: "Jak nazywa się reakcja, w której woda jest produktem?", a: "reakcja spalania" },
+{ q: "Jak nazywa się reakcja chemiczna zachodząca w bateriach?", a: "reakcja redoks" },
+
+];
+
+let currentQuestion = 0;
+
+function loadQuestion() {
+  document.getElementById("question").textContent = questions[currentQuestion].q;
+}
+
+function checkAnswer() {
+  let answer = document.getElementById("answer").value.trim().toLowerCase();
+  let feedback = document.getElementById("feedback");
+  if (answer === questions[currentQuestion].a.toLowerCase()) {
+    feedback.textContent = "✅ Dobrze!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "❌ Źle! Poprawna odpowiedź: " + questions[currentQuestion].a;
+    feedback.style.color = "red";
+  }
+  currentQuestion = (currentQuestion + 1) % questions.length;
+  setTimeout(() => {
+    document.getElementById("answer").value = "";
+    loadQuestion();
+  }, 1500);
+}
+
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

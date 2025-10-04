@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informatyka – Pytania</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #0f0f0f;
+  position: relative;
+  color: #fff;
+}
+#question-container {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  background-color: rgba(0,0,0,0.85);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #00e676;
+  color: black;
+  cursor: pointer;
+}
+button:hover { background: #00c853; }
+
+/* Animacja cyfr binarnych */
+.binary {
+  position: absolute;
+  font-size: 16px;
+  animation: rise linear infinite;
+  opacity: 0.7;
+  color: #00ff00;
+}
+@keyframes rise {
+  0% { transform: translateY(100vh); opacity:0.7; }
+  100% { transform: translateY(-10vh); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+  <h2 id="question">Ładowanie pytania...</h2>
+  <input type="text" id="answer" placeholder="Twoja odpowiedź">
+  <br>
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="feedback"></div>
+  <br>
+  <button onclick="window.location.href='index.html'">⬅ Powrót do strony głównej</button>
+</div>
+
+<script>
+// Tworzenie animacji binarnej
+for(let i=0; i<50; i++){
+  let binary = document.createElement('div');
+  binary.className = 'binary';
+  binary.textContent = Math.random() < 0.5 ? '0' : '1';
+  binary.style.left = Math.random()*100 + 'vw';
+  binary.style.animationDuration = (4 + Math.random()*6) + 's';
+  binary.style.fontSize = (12 + Math.random()*20) + 'px';
+  document.body.appendChild(binary);
+}
+
+// Pytania informatyczne
+const questions = [
+{ q: "Co to jest komputer?", a: "urządzenie do przetwarzania danych" },
+{ q: "Co to jest procesor?", a: "jednostka centralna komputera" },
+{ q: "Co to jest pamięć RAM?", a: "pamięć operacyjna" },
+{ q: "Co to jest pamięć ROM?", a: "pamięć stała" },
+{ q: "Co oznacza skrót CPU?", a: "central processing unit" },
+{ q: "Co oznacza skrót GPU?", a: "graphics processing unit" },
+{ q: "Co oznacza skrót HTML?", a: "hypertext markup language" },
+{ q: "Co oznacza skrót CSS?", a: "cascading style sheets" },
+{ q: "Co oznacza skrót JS?", a: "javascript" },
+{ q: "Co to jest system operacyjny?", a: "oprogramowanie zarządzające komputerem" },
+{ q: "Podaj przykład systemu operacyjnego.", a: "windows" },
+{ q: "Podaj przykład systemu operacyjnego.", a: "linux" },
+{ q: "Podaj przykład systemu operacyjnego.", a: "macos" },
+{ q: "Co to jest program komputerowy?", a: "zbiór instrukcji dla komputera" },
+{ q: "Co to jest baza danych?", a: "zbiór uporządkowanych informacji" },
+{ q: "Co to jest algorytm?", a: "ciąg kroków do rozwiązania problemu" },
+{ q: "Co to jest kod binarny?", a: "reprezentacja danych w systemie 0 i 1" },
+{ q: "Co to jest adres IP?", a: "unikalny adres komputera w sieci" },
+{ q: "Co to jest serwer?", a: "komputer udostępniający zasoby w sieci" },
+{ q: "Co to jest klient w sieci?", a: "komputer korzystający z zasobów serwera" },
+{ q: "Co oznacza skrót URL?", a: "uniform resource locator" },
+{ q: "Co oznacza skrót HTTP?", a: "hypertext transfer protocol" },
+{ q: "Co oznacza skrót HTTPS?", a: "secure hypertext transfer protocol" },
+{ q: "Co to jest strona internetowa?", a: "dokument dostępny w sieci www" },
+{ q: "Co to jest przeglądarka internetowa?", a: "program do przeglądania stron www" },
+{ q: "Podaj przykład przeglądarki internetowej.", a: "chrome" },
+{ q: "Podaj przykład przeglądarki internetowej.", a: "firefox" },
+{ q: "Podaj przykład przeglądarki internetowej.", a: "edge" },
+{ q: "Co to jest wirus komputerowy?", a: "złośliwe oprogramowanie" },
+{ q: "Co to jest firewall?", a: "program lub urządzenie chroniące sieć" },
+{ q: "Co to jest chmura obliczeniowa?", a: "przechowywanie danych w internecie" },
+{ q: "Co to jest backup?", a: "kopiowanie danych w celu ich ochrony" },
+{ q: "Co to jest sieć LAN?", a: "sieć lokalna" },
+{ q: "Co to jest sieć WAN?", a: "sieć rozległa" },
+{ q: "Co to jest adres MAC?", a: "unikalny identyfikator karty sieciowej" },
+{ q: "Co to jest drukarka 3D?", a: "urządzenie drukujące obiekty trójwymiarowe" },
+{ q: "Co to jest open source?", a: "oprogramowanie z otwartym kodem źródłowym" },
+{ q: "Co to jest kompilator?", a: "program tłumaczący kod źródłowy na kod maszynowy" },
+{ q: "Co to jest interpreter?", a: "program wykonujący kod linia po linii" },
+{ q: "Co to jest IDE?", a: "środowisko do tworzenia oprogramowania" },
+{ q: "Co oznacza skrót SQL?", a: "structured query language" },
+{ q: "Co oznacza skrót FTP?", a: "file transfer protocol" },
+{ q: "Co oznacza skrót DNS?", a: "domain name system" },
+{ q: "Co to jest HTML5?", a: "nowa wersja języka HTML" },
+{ q: "Co to jest CSS3?", a: "nowa wersja języka CSS" },
+{ q: "Co to jest JavaScript?", a: "język programowania do stron www" },
+{ q: "Co to jest Python?", a: "język programowania ogólnego zastosowania" },
+{ q: "Co to jest Java?", a: "język programowania używany w aplikacjach i androidzie" },
+{ q: "Co to jest C++?", a: "język programowania zorientowany obiektowo" },
+{ q: "Co to jest C#?", a: "język programowania do aplikacji windows" },
+{ q: "Co to jest Git?", a: "system kontroli wersji" },
+{ q: "Co to jest GitHub?", a: "platforma do przechowywania repozytoriów git" },
+{ q: "Co to jest debugger?", a: "narzędzie do wyszukiwania błędów w programie" },
+{ q: "Co to jest zmienna w programowaniu?", a: "miejsce do przechowywania danych" },
+{ q: "Co to jest funkcja w programowaniu?", a: "blok kodu wykonujący zadanie" },
+{ q: "Co to jest pętla?", a: "instrukcja powtarzająca kod" },
+{ q: "Co to jest warunek if?", a: "instrukcja warunkowa" },
+{ q: "Co to jest array/tablica?", a: "zbiór elementów tego samego typu" },
+{ q: "Co to jest string?", a: "łańcuch znaków" },
+{ q: "Co to jest integer?", a: "liczba całkowita" },
+{ q: "Co to jest boolean?", a: "wartość prawda/fałsz" },
+{ q: "Co to jest operator logiczny AND?", a: "i" },
+{ q: "Co to jest operator logiczny OR?", a: "lub" },
+{ q: "Co to jest operator logiczny NOT?", a: "nie" },
+{ q: "Co to jest klasa w programowaniu?", a: "szablon obiektu" },
+{ q: "Co to jest obiekt w programowaniu?", a: "instancja klasy" },
+{ q: "Co to jest interfejs w programowaniu?", a: "zestaw metod do implementacji" },
+{ q: "Co to jest metoda?", a: "funkcja należąca do klasy" },
+{ q: "Co to jest konstruktor?", a: "funkcja tworząca obiekt" },
+{ q: "Co to jest dziedziczenie?", a: "przekazywanie cech klasy do podklasy" },
+{ q: "Co to jest polimorfizm?", a: "zdolność obiektu do przyjmowania różnych form" },
+{ q: "Co to jest enkapsulacja?", a: "ukrywanie danych w obiekcie" },
+{ q: "Co to jest API?", a: "interfejs do komunikacji programów" },
+{ q: "Co to jest protokół sieciowy?", a: "zasady przesyłania danych w sieci" },
+{ q: "Co to jest adres IPv4?", a: "adres 32-bitowy w sieci" },
+{ q: "Co to jest adres IPv6?", a: "adres 128-bitowy w sieci" },
+{ q: "Co to jest HTTP?", a: "protokół przesyłania stron www" },
+{ q: "Co to jest HTTPS?", a: "bezpieczny protokół www" },
+{ q: "Co to jest cookie?", a: "mały plik przechowywany przez stronę" },
+{ q: "Co to jest session?", a: "czasowe przechowywanie danych użytkownika" },
+{ q: "Co to jest baza danych MySQL?", a: "relacyjna baza danych" },
+{ q: "Co to jest NoSQL?", a: "baza danych nierelacyjna" },
+{ q: "Co to jest JSON?", a: "format wymiany danych" },
+{ q: "Co to jest XML?", a: "format wymiany danych" },
+{ q: "Co to jest HTML DOM?", a: "model dokumentu HTML" },
+{ q: "Co to jest framework?", a: "szkielet do tworzenia aplikacji" },
+{ q: "Co to jest biblioteka programistyczna?", a: "zestaw funkcji do użycia w programie" },
+{ q: "Co to jest IDE?", a: "środowisko programistyczne" },
+{ q: "Co to jest kompilacja?", a: "tłumaczenie kodu źródłowego na maszynowy" },
+{ q: "Co to jest interpreter?", a: "wykonywanie kodu linia po linii" },
+{ q: "Co to jest protokół TCP?", a: "protokół transmisji danych" },
+{ q: "Co to jest protokół UDP?", a: "protokół transmisji danych bez połączenia" },
+{ q: "Co to jest LAN?", a: "sieć lokalna" },
+{ q: "Co to jest WAN?", a: "sieć rozległa" },
+{ q: "Co to jest adres MAC?", a: "unikalny identyfikator karty sieciowej" },
+{ q: "Co to jest router?", a: "urządzenie kierujące ruchem sieciowym" },
+{ q: "Co to jest switch?", a: "urządzenie łączące wiele komputerów w sieci" },
+{ q: "Co to jest modem?", a: "urządzenie umożliwiające połączenie z internetem" },
+{ q: "Co to jest Wi-Fi?", a: "bezprzewodowa sieć lokalna" },
+{ q: "Co to jest VPN?", a: "szyfrowane połączenie przez sieć publiczną" },
+{ q: "Co to jest cloud computing?", a: "przechowywanie danych w chmurze" },
+{ q: "Co to jest backup?", a: "kopiowanie danych w celu ich ochrony" },
+{ q: "Co to jest cyberbezpieczeństwo?", a: "ochrona danych i systemów" },
+{ q: "Co to jest phishing?", a: "oszustwo internetowe" },
+{ q: "Co to jest malware?", a: "złośliwe oprogramowanie" },
+{ q: "Co to jest spyware?", a: "oprogramowanie szpiegujące" },
+{ q: "Co to jest trojan?", a: "złośliwy program podszywający się pod legalny" },
+{ q: "Co to jest ransomware?", a: "oprogramowanie blokujące komputer do zapłaty okupu" },
+{ q: "Co to jest firewall?", a: "program lub urządzenie chroniące sieć" },
+{ q: "Co to jest hacker?", a: "osoba włamywująca się do systemów" },
+{ q: "Co to jest program antywirusowy?", a: "oprogramowanie chroniące komputer przed wirusami" },
+{ q: "Co to jest open source?", a: "oprogramowanie z otwartym kodem źródłowym" },
+{ q: "Co to jest closed source?", a: "oprogramowanie z zamkniętym kodem źródłowym" },
+{ q: "Co to jest komputeryzacja?", a: "proces wprowadzania komputerów do różnych dziedzin" },
+{ q: "Co to jest sztuczna inteligencja?", a: "programy symulujące ludzkie myślenie" },
+{ q: "Co to jest machine learning?", a: "uczenie maszynowe" },
+{ q: "Co to jest deep learning?", a: "głębokie uczenie maszynowe" },
+{ q: "Co to jest robot?", a: "maszyna wykonująca zaprogramowane czynności" },
+{ q: "Co to jest IoT?", a: "internet rzeczy" },
+{ q: "Co to jest blockchain?", a: "łańcuch bloków do przechowywania danych" },
+{ q: "Co to jest kryptowaluta?", a: "waluta cyfrowa oparta na blockchain" },
+{ q: "Co to jest bitcoin?", a: "pierwsza kryptowaluta" },
+{ q: "Co to jest ethereum?", a: "platforma blockchain" },
+{ q: "Co to jest NFT?", a: "unikalny cyfrowy token" },
+{ q: "Co to jest serwer www?", a: "komputer udostępniający strony www" },
+{ q: "Co to jest hosting?", a: "usługa przechowywania stron www" },
+{ q: "Co to jest domena?", a: "adres strony internetowej" },
+{ q: "Co to jest CMS?", a: "system zarządzania treścią strony www" },
+{ q: "Co to jest WordPress?", a: "system CMS" },
+{ q: "Co to jest Joomla?", a: "system CMS" },
+{ q: "Co to jest Drupal?", a: "system CMS" },
+{ q: "Co to jest UX?", a: "doświadczenie użytkownika" },
+{ q: "Co to jest UI?", a: "interfejs użytkownika" }
+];
+
+let currentQuestion = 0;
+
+function loadQuestion() {
+  document.getElementById("question").textContent = questions[currentQuestion].q;
+}
+
+function checkAnswer() {
+  let answer = document.getElementById("answer").value.trim().toLowerCase();
+  let feedback = document.getElementById("feedback");
+  if (answer === questions[currentQuestion].a.toLowerCase()) {
+    feedback.textContent = "✅ Dobrze!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "❌ Źle! Poprawna odpowiedź: " + questions[currentQuestion].a;
+    feedback.style.color = "red";
+  }
+  currentQuestion = (currentQuestion + 1) % questions.length;
+  setTimeout(() => {
+    document.getElementById("answer").value = "";
+    loadQuestion();
+  }, 1500);
+}
+
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

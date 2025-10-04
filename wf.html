@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WF – Pytania</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(#a0d8f1, #ffffff);
+  position: relative;
+}
+#question-container {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  background-color: rgba(255,255,255,0.9);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #f44336;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #d32f2f; }
+
+/* Animacja biegaczy */
+.runner {
+  position: absolute;
+  font-size: 30px;
+  animation: run linear infinite;
+}
+@keyframes run {
+  0% { transform: translateX(-10vw); }
+  100% { transform: translateX(110vw); }
+}
+
+/* Animacja piłek, lotek i rakietek */
+.sports {
+  position: absolute;
+  font-size: 25px;
+  animation: floatSports linear infinite;
+}
+@keyframes floatSports {
+  0% { transform: translateY(100vh) rotate(0deg); }
+  100% { transform: translateY(-10vh) rotate(360deg); }
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+  <h2 id="question">Ładowanie pytania...</h2>
+  <input type="text" id="answer" placeholder="Twoja odpowiedź">
+  <br>
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="feedback"></div>
+  <br>
+  <button onclick="window.location.href='index.html'">⬅ Powrót do strony głównej</button>
+</div>
+
+<script>
+// Tworzenie biegaczy
+for(let i=0;i<8;i++){
+  let runner = document.createElement('div');
+  runner.className = 'runner';
+  runner.textContent = '🏃‍♂️';
+  runner.style.top = (10 + Math.random()*70) + 'vh';
+  runner.style.animationDuration = (8 + Math.random()*5) + 's';
+  document.body.appendChild(runner);
+}
+
+// Tworzenie piłek, lotek i rakietek
+const sportsItems = ['⚽','🏀','🏐','🏸','🎾'];
+for(let i=0;i<15;i++){
+  let item = document.createElement('div');
+  item.className = 'sports';
+  item.textContent = sportsItems[Math.floor(Math.random()*sportsItems.length)];
+  item.style.left = Math.random()*100 + 'vw';
+  item.style.animationDuration = (4 + Math.random()*6) + 's';
+  item.style.fontSize = (20 + Math.random()*20) + 'px';
+  document.body.appendChild(item);
+}
+
+// Pytania WF
+const questions = [
+{ q: "Co to jest rozgrzewka?", a: "ćwiczenia przygotowujące ciało do wysiłku" },
+{ q: "Co to jest stretching?", a: "rozciąganie mięśni" },
+{ q: "Co to jest siła mięśniowa?", a: "zdolność mięśni do wytwarzania siły" },
+{ q: "Co to jest wytrzymałość?", a: "zdolność do długotrwałego wysiłku" },
+{ q: "Co to jest szybkość?", a: "zdolność do wykonywania ruchu w krótkim czasie" },
+{ q: "Co to jest koordynacja ruchowa?", a: "zdolność do precyzyjnego wykonywania ruchów" },
+{ q: "Co to jest gibkość?", a: "zdolność do wykonywania ruchów w pełnym zakresie" },
+{ q: "Co to jest równowaga?", a: "zdolność do utrzymania stabilnej postawy" },
+{ q: "Co to jest siatkówka?", a: "gra zespołowa z piłką nad siatką" },
+{ q: "Co to jest koszykówka?", a: "gra zespołowa z rzucaniem piłki do kosza" },
+{ q: "Co to jest piłka nożna?", a: "gra zespołowa z kopaniem piłki do bramki" },
+{ q: "Co to jest lekkoatletyka?", a: "zespół dyscyplin sportowych biegowych i skocznych" },
+{ q: "Co to jest pływanie?", a: "sport w wodzie" },
+{ q: "Co to jest gimnastyka?", a: "ćwiczenia rozwijające ciało" },
+{ q: "Co to jest marsz?", a: "chodzenie w szybkim tempie" },
+{ q: "Co to jest bieg?", a: "szybkie poruszanie się na nogach" },
+{ q: "Co to jest skok w dal?", a: "skok poziomy jak najdalej" },
+{ q: "Co to jest skok wzwyż?", a: "skok pionowy jak najwyżej" },
+{ q: "Co to jest rzut oszczepem?", a: "rzut długim przedmiotem" },
+{ q: "Co to jest rzut kulą?", a: "rzut kulą o określonej wadze" },
+{ q: "Co to jest bieg sztafetowy?", a: "bieg zespołowy z przekazaniem pałeczki" },
+{ q: "Co to jest wyścig krótkodystansowy?", a: "bieg na krótki dystans z maksymalną szybkością" },
+{ q: "Co to jest wyścig długodystansowy?", a: "bieg na długi dystans z równym tempem" },
+{ q: "Co to jest aerobik?", a: "ćwiczenia rytmiczne przy muzyce" },
+{ q: "Co to jest joga?", a: "ćwiczenia rozciągające i relaksacyjne" },
+{ q: "Co to jest pilates?", a: "ćwiczenia wzmacniające mięśnie głębokie" },
+{ q: "Co to jest orbitrek?", a: "przyrząd do ćwiczeń cardio" },
+{ q: "Co to jest rower stacjonarny?", a: "sprzęt do jazdy rowerowej w miejscu" },
+{ q: "Co to jest skakanka?", a: "przyrząd do ćwiczeń skocznych" },
+{ q: "Co to jest pompka?", a: "ćwiczenie wzmacniające mięśnie klatki i ramion" },
+{ q: "Co to jest przysiad?", a: "ćwiczenie wzmacniające nogi i pośladki" },
+{ q: "Co to jest brzuszek?", a: "ćwiczenie wzmacniające mięśnie brzucha" },
+{ q: "Co to jest podciąganie?", a: "ćwiczenie wzmacniające mięśnie pleców i ramion" },
+{ q: "Co to jest marszobieg?", a: "połączenie marszu i biegu" },
+{ q: "Co to jest interwał treningowy?", a: "naprzemienne okresy intensywnego i lekkiego wysiłku" },
+{ q: "Co to jest trening siłowy?", a: "ćwiczenia rozwijające siłę mięśni" },
+{ q: "Co to jest trening wytrzymałościowy?", a: "ćwiczenia poprawiające kondycję sercowo-naczyniową" },
+{ q: "Co to jest rozluźnienie mięśni?", a: "zakończenie wysiłku i odpoczynek" },
+{ q: "Co to jest pulsometr?", a: "urządzenie do mierzenia tętna" },
+{ q: "Co to jest tętno spoczynkowe?", a: "liczba uderzeń serca w stanie spoczynku" },
+{ q: "Co to jest tętno maksymalne?", a: "najwyższa liczba uderzeń serca przy wysiłku" },
+{ q: "Co to jest odżywianie sportowca?", a: "dieta wspierająca wysiłek fizyczny" },
+{ q: "Co to jest nawodnienie organizmu?", a: "dostarczanie odpowiedniej ilości wody" },
+{ q: "Co to jest regeneracja mięśni?", a: "odpoczynek po wysiłku dla odbudowy mięśni" },
+{ q: "Co to jest zdrowa postawa ciała?", a: "utrzymywanie prawidłowej sylwetki" },
+{ q: "Co to jest rozciąganie dynamiczne?", a: "ruchowe rozciąganie mięśni" },
+{ q: "Co to jest rozciąganie statyczne?", a: "rozciąganie mięśni w bezruchu" },
+{ q: "Co to jest balans ciała?", a: "utrzymywanie równowagi podczas ruchu" },
+{ q: "Co to jest koordynacja wzrokowo-ruchowa?", a: "zdolność kontrolowania ruchu oczami i rękami" },
+{ q: "Co to jest siła eksplozywna?", a: "zdolność do krótkich, bardzo intensywnych ruchów" },
+{ q: "Co to jest wydolność tlenowa?", a: "zdolność organizmu do długotrwałego wysiłku" },
+{ q: "Co to jest wydolność beztlenowa?", a: "zdolność organizmu do krótkotrwałego, intensywnego wysiłku" },
+{ q: "Co to jest gra zespołowa?", a: "sport, w którym uczestniczy kilka osób" },
+{ q: "Co to jest gra indywidualna?", a: "sport, w którym uczestniczy jedna osoba" },
+{ q: "Co to jest zasada fair play?", a: "uczciwe i bezpieczne zachowanie w sporcie" },
+{ q: "Co to jest sędzia sportowy?", a: "osoba nadzorująca przebieg gry" },
+{ q: "Co to jest rzut piłką lekarską?", a: "ćwiczenie wzmacniające mięśnie ramion i tułowia" },
+{ q: "Co to jest trening obwodowy?", a: "ćwiczenia w serii połączonych stacji" },
+{ q: "Co to jest rozgrzewka ogólna?", a: "ćwiczenia przygotowujące całe ciało" },
+{ q: "Co to jest rozgrzewka specjalistyczna?", a: "ćwiczenia przygotowujące do konkretnego sportu" },
+{ q: "Co to jest crossfit?", a: "trening funkcjonalny o wysokiej intensywności" },
+{ q: "Co to jest bieżnia?", a: "sprzęt do biegu w miejscu" },
+{ q: "Co to jest ergometr wioślarski?", a: "sprzęt symulujący wiosłowanie" },
+{ q: "Co to jest podbieganie?", a: "krótki bieg pod górę" },
+{ q: "Co to jest sprint?", a: "krótki bieg maksymalny" },
+{ q: "Co to jest trucht?", a: "lekki bieg regeneracyjny" },
+{ q: "Co to jest orbit?", a: "przyrząd do ćwiczeń cardio" },
+{ q: "Co to jest spinning?", a: "trening na rowerze stacjonarnym przy muzyce" },
+{ q: "Co to jest plyometria?", a: "ćwiczenia skocznościowe" },
+{ q: "Co to jest podciąganie na drążku?", a: "ćwiczenie wzmacniające górne partie ciała" },
+{ q: "Co to jest wspinaczka sportowa?", a: "aktywny sport na ścianie wspinaczkowej" },
+{ q: "Co to jest sztuka walki?", a: "dyscyplina sportowa ucząca walki" },
+{ q: "Co to jest joga dla sportowców?", a: "ćwiczenia rozciągające i oddechowe" },
+{ q: "Co to jest pilates dla sportowców?", a: "ćwiczenia wzmacniające mięśnie głębokie" },
+{ q: "Co to jest aerobik step?", a: "ćwiczenia na podwyższeniu rytmiczne" },
+{ q: "Co to jest trening funkcjonalny?", a: "ćwiczenia poprawiające codzienną sprawność" },
+{ q: "Co to jest stretching statyczny?", a: "rozciąganie w bezruchu" },
+{ q: "Co to jest stretching dynamiczny?", a: "rozciąganie w ruchu" },
+{ q: "Co to jest zimny prysznic po treningu?", a: "metoda regeneracji mięśni" },
+{ q: "Co to jest rozluźnienie mięśni?", a: "odpoczynek po wysiłku fizycznym" },
+{ q: "Co to jest ćwiczenie izometryczne?", a: "napinanie mięśni bez zmiany długości" },
+{ q: "Co to jest ćwiczenie ekscentryczne?", a: "rozciąganie mięśnia podczas napięcia" },
+{ q: "Co to jest ćwiczenie koncentryczne?", a: "skracanie mięśnia podczas napięcia" },
+{ q: "Co to jest wiosłowanie?", a: "ćwiczenie na plecy i ramiona" },
+{ q: "Co to jest martwy ciąg?", a: "ćwiczenie siłowe na plecy i nogi" },
+{ q: "Co to jest przysiad ze sztangą?", a: "ćwiczenie siłowe na nogi i pośladki" },
+{ q: "Co to jest pompka na poręczach?", a: "ćwiczenie wzmacniające klatkę i tricepsy" },
+{ q: "Co to jest plank?", a: "ćwiczenie izometryczne na mięśnie brzucha" },
+{ q: "Co to jest burpee?", a: "ćwiczenie wzmacniające całe ciało" },
+{ q: "Co to jest skipping?", a: "ćwiczenie biegowe na miejscu" },
+{ q: "Co to jest jazda na rowerze?", a: "ćwiczenie poprawiające kondycję" },
+{ q: "Co to jest pływanie kraulem?", a: "szybki styl pływacki" },
+{ q: "Co to jest pływanie stylem grzbietowym?", a: "styl na plecach" },
+{ q: "Co to jest pływanie stylem klasycznym?", a: "styl żabką" },
+{ q: "Co to jest pływanie stylem motylkowym?", a: "szybki styl wymagający koordynacji rąk i nóg" },
+{ q: "Co to jest technika oddychania w pływaniu?", a: "sposób wdechu i wydechu w wodzie" },
+{ q: "Co to jest rozgrzewka w wodzie?", a: "ćwiczenia przygotowujące do pływania" },
+{ q: "Co to jest bezpieczeństwo w sporcie?", a: "stosowanie zasad chroniących przed urazami" }
+
+];
+
+let currentQuestion = 0;
+
+function loadQuestion() {
+  document.getElementById("question").textContent = questions[currentQuestion].q;
+}
+
+function checkAnswer() {
+  let answer = document.getElementById("answer").value.trim().toLowerCase();
+  let feedback = document.getElementById("feedback");
+  if (answer === questions[currentQuestion].a.toLowerCase()) {
+    feedback.textContent = "✅ Dobrze!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "❌ Źle! Poprawna odpowiedź: " + questions[currentQuestion].a;
+    feedback.style.color = "red";
+  }
+  currentQuestion = (currentQuestion + 1) % questions.length;
+  setTimeout(() => {
+    document.getElementById("answer").value = "";
+    loadQuestion();
+  }, 1500);
+}
+
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

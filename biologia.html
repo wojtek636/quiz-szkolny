@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biologia – Pytania</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(#cce7cc, #f0fff0);
+  position: relative;
+}
+#question-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  background-color: rgba(255,255,255,0.9);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #388e3c; }
+
+/* Liście animowane w tle */
+.leaf {
+  position: absolute;
+  top: -50px;
+  font-size: 20px;
+  color: #4caf50;
+  animation: fall linear infinite;
+}
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0deg); opacity:1; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+  <h2 id="question">Ładowanie pytania...</h2>
+  <input type="text" id="answer" placeholder="Twoja odpowiedź">
+  <br>
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="feedback"></div>
+  <br>
+  <button onclick="window.location.href='index.html'">⬅ Powrót do strony głównej</button>
+</div>
+
+<script>
+// Liście w tle
+for(let i=0; i<20; i++){
+  let leaf = document.createElement('div');
+  leaf.className = 'leaf';
+  leaf.textContent = '🍃';
+  leaf.style.left = Math.random() * 100 + 'vw';
+  leaf.style.animationDuration = (3 + Math.random()*5) + 's';
+  leaf.style.fontSize = (15 + Math.random()*25) + 'px';
+  document.body.appendChild(leaf);
+}
+
+// Pytania (tu wklej tablicę pytań biologicznych)
+const questions = [
+  { q: "Jak nazywa się proces, w którym rośliny produkują tlen?", a: "fotosynteza" },
+  { q: "Który organ w ciele człowieka filtruje krew?", a: "nerki" },
+  { q: "Jak nazywa się podstawowa jednostka życia?", a: "komórka" },
+  { q: "Który narząd odpowiada za pompowanie krwi?", a: "serce" },
+  { q: "Jak nazywa się proces rozmnażania bez udziału gamet?", a: "bezpłciowe" },
+  { q: "Jak nazywa się cząsteczka przenosząca informację genetyczną?", a: "dna" },
+  { q: "Który organ wytwarza insulinę?", a: "trzustka" },
+  { q: "Jak nazywa się jednostka dziedziczenia?", a: "gen" },
+  { q: "Jak nazywa się proces podziału komórki somatycznej?", a: "mitoza" },
+  { q: "Jak nazywa się proces podziału redukcyjnego?", a: "mejoza" },
+  { q: "Który układ odpowiada za transport tlenu?", a: "krwionośny" },
+  { q: "Jak nazywa się proces wydalania potu?", a: "termoregulacja" },
+  { q: "Jak nazywa się podstawowy składnik błon komórkowych?", a: "fosfolipidy" },
+  { q: "Które witaminy rozpuszczają się w tłuszczach?", a: "a d e k" },
+  { q: "Jak nazywa się symbioza grzyba i glonu?", a: "porost" },
+  { q: "Który hormon reguluje poziom cukru we krwi?", a: "insulina" },
+  { q: "Jak nazywa się nauka o zwierzętach?", a: "zoologia" },
+  { q: "Jak nazywa się nauka o roślinach?", a: "botanika" },
+  { q: "Jak nazywa się nauka o tkankach?", a: "histologia" },
+  { q: "Jak nazywa się nauka o chorobach?", a: "patologia" },
+  { q: "Który układ odpowiada za ruch organizmu?", a: "mięśniowy" },
+  { q: "Który organizm jest producentem w ekosystemie?", a: "roślina" },
+  { q: "Jak nazywa się organizm żywiący się martwą materią?", a: "saprofity" },
+  { q: "Który organizm jest konsumentem I rzędu?", a: "roślinożerca" },
+  { q: "Jak nazywa się organizm pasożytniczy wewnętrzny?", a: "tasiemiec" },
+  { q: "Jak nazywa się najmniejsza kość w ciele człowieka?", a: "strzemiączko" },
+  { q: "Jak nazywa się proces zamiany larwy w postać dorosłą?", a: "metamorfoza" },
+  { q: "Który narząd odpowiada za mowę i oddychanie?", a: "krtań" },
+  { q: "Jak nazywa się największe zwierzę na Ziemi?", a: "płetwal błękitny" },
+  { q: "Jak nazywa się nauka o mikroorganizmach?", a: "mikrobiologia" },
+  { q: "Jak nazywa się zjawisko kurczenia mięśni po śmierci?", a: "stężenie pośmiertne" },
+  { q: "Jak nazywa się cząsteczka nośnika energii w komórce?", a: "atp" },
+  { q: "Które naczynia krwionośne transportują krew z serca?", a: "tętnice" },
+  { q: "Które naczynia krwionośne transportują krew do serca?", a: "żyły" },
+  { q: "Jak nazywa się główny mięsień oddechowy człowieka?", a: "przepona" },
+  { q: "Jak nazywa się część mózgu odpowiadająca za pamięć?", a: "hipokamp" },
+  { q: "Który narząd wydziela żółć?", a: "wątroba" },
+  { q: "Jak nazywa się proces rozkładu substancji w komórce?", a: "katabolizm" },
+  { q: "Jak nazywa się proces syntezy substancji w komórce?", a: "anabolizm" },
+  { q: "Jak nazywa się przewód łączący jamę ustną z żołądkiem?", a: "przełyk" },
+  { q: "Który pierwiastek jest częścią hemoglobiny?", a: "żelazo" },
+  { q: "Które komórki produkują przeciwciała?", a: "limfocyty b" },
+  { q: "Jak nazywa się proces wchłaniania wody przez korzenie?", a: "osmoza" },
+  { q: "Jak nazywa się proces przenikania gazów oddechowych w płucach?", a: "dyfuzja" },
+  { q: "Która część oka skupia światło?", a: "soczewka" },
+  { q: "Jak nazywa się barwnik nadający kolor skórze?", a: "melanina" },
+  { q: "Który układ odpowiada za reakcje hormonalne?", a: "dokrewny" },
+  { q: "Jak nazywa się proces wydalania moczu?", a: "mikcja" },
+  { q: "Jak nazywa się organizm cudzożywny?", a: "heterotrof" },
+  { q: "Jak nazywa się organizm samożywny?", a: "autotrof" },
+  { q: "Jak nazywa się barwnik odpowiedzialny za fotosyntezę?", a: "chlorofil" },
+  { q: "Które komórki przewodzą impulsy nerwowe?", a: "neurony" },
+  { q: "Który zmysł odbiera bodźce chemiczne w jamie ustnej?", a: "smak" },
+  { q: "Który zmysł odbiera bodźce chemiczne w nosie?", a: "węch" },
+  { q: "Jak nazywa się narząd, w którym rozwija się płód człowieka?", a: "macica" },
+  { q: "Jak nazywa się proces oddychania bez użycia tlenu?", a: "fermentacja" },
+  { q: "Który hormon odpowiada za wzrost człowieka?", a: "somatotropina" },
+  { q: "Jak nazywa się proces powstawania gamet?", a: "gametogeneza" },
+  { q: "Jak nazywa się proces zapłodnienia poza organizmem?", a: "in vitro" },
+  { q: "Jak nazywa się część mózgu odpowiadająca za równowagę?", a: "móżdżek" },
+  { q: "Jak nazywa się najdłuższa kość w ciele człowieka?", a: "udowa" },
+  { q: "Który organ odpowiada za usuwanie dwutlenku węgla?", a: "płuca" },
+  { q: "Jak nazywa się naczynie, w którym zachodzi wymiana substancji?", a: "naczynia włosowate" },
+  { q: "Który narząd człowieka magazynuje żółć?", a: "pęcherzyk żółciowy" },
+  { q: "Jak nazywa się układ odpowiedzialny za rozmnażanie?", a: "rozrodczy" },
+  { q: "Jak nazywa się proces utrzymywania stałej temperatury ciała?", a: "homeostaza" },
+  { q: "Który organizm ma ciało podzielone na pierścienie?", a: "dżdżownica" },
+  { q: "Jak nazywa się układ odpowiadający za ochronę ciała?", a: "skórny" },
+  { q: "Jak nazywa się proces dostarczania tlenu do komórek?", a: "oddychanie" },
+  { q: "Które krwinki transportują tlen?", a: "czerwone krwinki" },
+  { q: "Jak nazywa się narząd słuchu?", a: "ucho" },
+  { q: "Która część mózgu kontroluje oddychanie i krążenie?", a: "rdzeń przedłużony" },
+  { q: "Jak nazywa się największa tętnica w organizmie człowieka?", a: "aorta" },
+  { q: "Jak nazywa się największa żyła w organizmie człowieka?", a: "żyła główna" },
+  { q: "Które komórki roślin przeprowadzają fotosyntezę?", a: "chloroplasty" },
+  { q: "Jak nazywa się organizm odżywiający się krwią?", a: "pasożyt" },
+  { q: "Który pierwiastek jest niezbędny roślinom do fotosyntezy?", a: "azot" },
+  { q: "Jak nazywa się proces usuwania niestrawionych resztek pokarmu?", a: "defekacja" },
+  { q: "Jak nazywa się nauka badająca dziedziczność?", a: "genetyka" },
+  { q: "Jak nazywa się miejsce połączenia kości?", a: "staw" },
+  { q: "Jak nazywa się tkanka przewodząca w roślinach substancje organiczne?", a: "łyko" },
+  { q: "Jak nazywa się tkanka odpowiedzialna za wzrost rośliny?", a: "merystem" },
+  { q: "Jak nazywa się proces tworzenia białek?", a: "translacja" },
+  { q: "Jak nazywa się proces kopiowania informacji genetycznej?", a: "transkrypcja" },
+  { q: "Jak nazywa się proces, w którym mitochondria produkują energię?", a: "oddychanie komórkowe" },
+  { q: "Który organ odpowiada za wytwarzanie czerwonych krwinek?", a: "szpik kostny" },
+  { q: "Jak nazywa się barwnik w mięśniach wiążący tlen?", a: "mioglobina" },
+  { q: "Który narząd odpowiada za filtrowanie limfy?", a: "węzły chłonne" },
+  { q: "Jak nazywa się proces wchłaniania substancji odżywczych w jelitach?", a: "resorpcja" },
+  { q: "Jak nazywa się witamina produkowana w skórze pod wpływem słońca?", a: "witamina d" },
+  { q: "Jak nazywa się narząd zmysłu u ryb do wykrywania drgań wody?", a: "linia boczna" },
+  { q: "Które owady przechodzą przeobrażenie zupełne?", a: "motyle" },
+  { q: "Które zwierzęta są stałocieplne?", a: "ssaki" },
+  { q: "Które zwierzęta są zmiennocieplne?", a: "gady" },
+  { q: "Jak nazywa się proces, w którym samica składa jaja?", a: "owulacja" },
+  { q: "Jak nazywa się proces zapadania zwierząt w sen zimowy?", a: "hibernacja" },
+  { q: "Jak nazywa się nauka o grzybach?", a: "mykologia" },
+  { q: "Jak nazywa się nauka o ptakach?", a: "ornitologia" },
+  { q: "Jak nazywa się nauka o rybach?", a: "ichtiologia" },
+  { q: "Który układ odpowiada za odbiór bodźców?", a: "nerwowy" },
+  { q: "Jak nazywa się tkanka tłuszczowa chroniąca przed zimnem?", a: "tkanka tłuszczowa podskórna" },
+  { q: "Który narząd odpowiada za wytwarzanie dźwięków?", a: "krtań" },
+  { q: "Jak nazywa się główny narząd układu rozrodczego męskiego?", a: "jądra" },
+  { q: "Jak nazywa się główny narząd układu rozrodczego żeńskiego?", a: "jajniki" },
+  { q: "Który hormon reguluje cykl menstruacyjny?", a: "progesteron" },
+  { q: "Jak nazywa się gaz wydychany przez człowieka?", a: "dwutlenek węgla" },
+  { q: "Które zwierzęta mają skrzela?", a: "ryby" },
+  { q: "Które zwierzęta mają tchawki?", a: "owady" },
+  { q: "Jak nazywa się proces rozmnażania u bakterii?", a: "podział poprzeczny" },
+  { q: "Który organizm wytwarza penicylinę?", a: "pleśń" },
+  { q: "Jak nazywa się proces wnikania wirusa do komórki?", a: "infekcja" },
+  { q: "Który organ odpowiada za produkcję hormonów płciowych u kobiet?", a: "jajniki" },
+  { q: "Który organ odpowiada za produkcję hormonów płciowych u mężczyzn?", a: "jądra" },
+  { q: "Jak nazywa się choroba powodowana przez brak insuliny?", a: "cukrzyca" },
+  { q: "Który organ odpowiada za magazynowanie krwi?", a: "śledziona" },
+  { q: "Które zwierzę ma najbardziej rozwinięty mózg?", a: "człowiek" },
+  { q: "Jak nazywa się organizm, który wytwarza własne pożywienie?", a: "autotrof" },
+  { q: "Jak nazywa się proces rozpuszczania kamieni nerkowych?", a: "dializa" },
+  { q: "Które zwierzęta składają jaja i karmią młode mlekiem?", a: "stekowce" },
+  { q: "Jak nazywa się narząd, w którym zachodzi wymiana gazowa u owadów?", a: "tchawki" },
+  { q: "Jak nazywa się proces starzenia się komórek?", a: "apoptoza" },
+  { q: "Który organizm produkuje chlorofil?", a: "rośliny" },
+  { q: "Jak nazywa się proces utraty wody przez liście?", a: "transpiracja" },
+  { q: "Który organizm ma ciało zbudowane z grzybni?", a: "grzyb" },
+  { q: "Który organizm przeprowadza chemosyntezę?", a: "bakterie" },
+  { q: "Jak nazywa się proces przystosowania się organizmów do środowiska?", a: "adaptacja" },
+  { q: "Jak nazywa się proces powstawania nowych gatunków?", a: "specjacja" },
+  { q: "Który naukowiec stworzył teorię ewolucji?", a: "darwin" },
+  { q: "Jak nazywa się nauka o ekosystemach?", a: "ekologia" },
+  { q: "Które zwierzę ma układ ambulakralny?", a: "rozgwiazda" },
+  { q: "Jak nazywa się organizm będący żywicielem pasożyta?", a: "żywiciel" },
+  { q: "Jak nazywa się wirus atakujący układ odpornościowy człowieka?", a: "hiv" },
+  { q: "Jak nazywa się choroba wywoływana przez wirus hiv?", a: "aids" },
+  { q: "Jak nazywa się choroba spowodowana brakiem witaminy c?", a: "szkorbut" },
+  { q: "Jak nazywa się choroba spowodowana brakiem witaminy d?", a: "krzywica" },
+  { q: "Jak nazywa się choroba spowodowana brakiem żelaza?", a: "anemia" }
+];
+
+let currentQuestion = 0;
+
+function loadQuestion() {
+  document.getElementById("question").textContent = questions[currentQuestion].q;
+}
+
+function checkAnswer() {
+  let answer = document.getElementById("answer").value.trim().toLowerCase();
+  let feedback = document.getElementById("feedback");
+  if (answer === questions[currentQuestion].a.toLowerCase()) {
+    feedback.textContent = "✅ Dobrze!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "❌ Źle! Poprawna odpowiedź: " + questions[currentQuestion].a;
+    feedback.style.color = "red";
+  }
+  currentQuestion = (currentQuestion + 1) % questions.length;
+  setTimeout(() => {
+    document.getElementById("answer").value = "";
+    loadQuestion();
+  }, 1500);
+}
+
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

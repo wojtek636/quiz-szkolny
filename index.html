@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Szkolny</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  height: 100vh;
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Animacja delikatnych fal w tle */
+@keyframes bgShift {
+  0% { background-position: 0 0; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0 0; }
+}
+body {
+  background-size: 200% 200%;
+  animation: bgShift 15s ease infinite;
+}
+
+h1 {
+  color: #fff;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  margin-bottom: 40px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  width: 90%;
+  max-width: 900px;
+}
+
+.button-card {
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+.button-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  filter: brightness(1.1);
+}
+</style>
+</head>
+<body>
+
+<h1>Quiz Szkolny – Wybierz przedmiot</h1>
+
+<div class="grid-container">
+  <a class="button-card" href="matematyka.html">Matematyka</a>
+  <a class="button-card" href="polski.html">Poslki</a>
+  <a class="button-card" href="biologia.html">Biologia</a>
+  <a class="button-card" href="chemia.html">Chemia</a>
+  <a class="button-card" href="fizyka.html">Fizyka</a>
+  <a class="button-card" href="geografia.html">Geografia</a>
+  <a class="button-card" href="informatyka.html">Informatyka</a>
+  <a class="button-card" href="plastyka.html">Plastyka</a>
+  <a class="button-card" href="wf.html">Wychowanie fizyczne</a>
+</div>
+
+</body>
+</html>

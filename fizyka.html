@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fizyka – Pytania</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  position: relative;
+}
+#question-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  background-color: rgba(255,255,255,0.9);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #f57c00;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #e65100; }
+
+/* Animacja fal/impulsów */
+.wave {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  height: 20px;
+  background: #00e5ff;
+  animation: waveAnim linear infinite;
+  opacity: 0.7;
+}
+@keyframes waveAnim {
+  0% { transform: translateY(0); height:20px; opacity:0.7; }
+  50% { transform: translateY(-80vh) scaleY(2); opacity:1; }
+  100% { transform: translateY(0); height:20px; opacity:0.7; }
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+  <h2 id="question">Ładowanie pytania...</h2>
+  <input type="text" id="answer" placeholder="Twoja odpowiedź">
+  <br>
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="feedback"></div>
+  <br>
+  <button onclick="window.location.href='index.html'">⬅ Powrót do strony głównej</button>
+</div>
+
+<script>
+// Tworzenie impulsów falowych w tle
+for(let i=0;i<50;i++){
+  let wave = document.createElement('div');
+  wave.className = 'wave';
+  wave.style.left = Math.random() * 100 + 'vw';
+  wave.style.animationDuration = (2 + Math.random()*3) + 's';
+  wave.style.height = (10 + Math.random()*30) + 'px';
+  document.body.appendChild(wave);
+}
+
+// Pytania z fizyki
+const questions = [
+{ q: "Jednostką siły jest?", a: "niuton" },
+{ q: "Jak nazywa się prędkość zmiany położenia ciała?", a: "prędkość" },
+{ q: "Jak nazywa się przyspieszenie ziemskie?", a: "9,81 m/s²" },
+{ q: "Jak nazywa się ilość materii w ciele?", a: "masa" },
+{ q: "Jednostką energii jest?", a: "dżul" },
+{ q: "Jak nazywa się praca wykonana, gdy siła działa wzdłuż drogi?", a: "praca" },
+{ q: "Jak nazywa się szybkość zmiany prędkości?", a: "przyspieszenie" },
+{ q: "Jak nazywa się opór ciała w ruchu?", a: "tarcie" },
+{ q: "Jednostką napięcia elektrycznego jest?", a: "wolt" },
+{ q: "Jednostką natężenia prądu jest?", a: "amper" },
+{ q: "Jednostką oporu elektrycznego jest?", a: "om" },
+{ q: "Jak nazywa się przepływ elektronów w przewodniku?", a: "prąd elektryczny" },
+{ q: "Jak nazywa się ilość ciepła potrzebna do podgrzania 1 kg wody o 1°C?", a: "kaloria" },
+{ q: "Jak nazywa się siła działająca na jednostkę powierzchni?", a: "ciśnienie" },
+{ q: "Jednostką ciśnienia jest?", a: "paskal" },
+{ q: "Jak nazywa się fala świetlna o najkrótszej długości?", a: "promieniowanie gamma" },
+{ q: "Jak nazywa się fala świetlna widzialna dla oka?", a: "światło widzialne" },
+{ q: "Jak nazywa się fala akustyczna?", a: "dźwięk" },
+{ q: "Jednostką częstotliwości jest?", a: "herc" },
+{ q: "Jak nazywa się ilość drgań w jednostce czasu?", a: "częstotliwość" },
+{ q: "Jak nazywa się wielkość określająca ilość energii w ruchu ciała?", a: "energia kinetyczna" },
+{ q: "Jak nazywa się energia związana z położeniem ciała?", a: "energia potencjalna" },
+{ q: "Jak nazywa się prędkość fali?", a: "prędkość fali" },
+{ q: "Jak nazywa się siła przyciągająca ciała do Ziemi?", a: "ciężar" },
+{ q: "Jak nazywa się jednostka masy w układzie SI?", a: "kilogram" },
+{ q: "Jak nazywa się urządzenie do pomiaru napięcia?", a: "woltomierz" },
+{ q: "Jak nazywa się urządzenie do pomiaru natężenia prądu?", a: "amperomierz" },
+{ q: "Jak nazywa się urządzenie do pomiaru oporu?", a: "omomierz" },
+{ q: "Jak nazywa się wzór określający zależność siły, masy i przyspieszenia?", a: "F=ma" },
+{ q: "Jak nazywa się wzór na prędkość?", a: "v=s/t" },
+{ q: "Jak nazywa się wzór na przyspieszenie?", a: "a=v/t" },
+{ q: "Jak nazywa się wzór na ciśnienie hydrostatyczne?", a: "p=ρgh" },
+{ q: "Jak nazywa się reakcja między dwoma ciałami sprężystymi?", a: "zderzenie sprężyste" },
+{ q: "Jak nazywa się reakcja między dwoma ciałami nieelastycznymi?", a: "zderzenie nieelastyczne" },
+{ q: "Jak nazywa się jednostka energii elektrycznej?", a: "kilowatogodzina" },
+{ q: "Jak nazywa się zjawisko odbicia fali?", a: "odbicie" },
+{ q: "Jak nazywa się zjawisko załamania fali?", a: "załamanie" },
+{ q: "Jak nazywa się zjawisko rozpraszania fali?", a: "dyfrakcja" },
+{ q: "Jak nazywa się zjawisko interferencji fal?", a: "interferencja" },
+{ q: "Jak nazywa się jednostka momentu siły?", a: "niutonometr" },
+{ q: "Jak nazywa się wzór na energię kinetyczną?", a: "Ek=1/2*m*v²" },
+{ q: "Jak nazywa się wzór na energię potencjalną?", a: "Ep=m*g*h" },
+{ q: "Jak nazywa się wzór na pracę?", a: "W=F*s" },
+{ q: "Jak nazywa się wzór na moc?", a: "P=W/t" },
+{ q: "Jak nazywa się wzór na prędkość fali mechanicznej?", a: "v=λ*f" },
+{ q: "Jak nazywa się jednostka długości fali?", a: "metr" },
+{ q: "Jak nazywa się jednostka częstotliwości?", a: "herc" },
+{ q: "Jak nazywa się siła wytwarzana przez sprężynę?", a: "siła sprężystości" },
+{ q: "Jak nazywa się prawo opisujące sprężystość?", a: "prawo Hooke'a" },
+{ q: "Jak nazywa się jednostka ładunku elektrycznego?", a: "kulomb" },
+{ q: "Jak nazywa się jednostka napięcia elektrycznego?", a: "wolt" },
+{ q: "Jak nazywa się jednostka indukcyjności?", a: "henr" },
+{ q: "Jak nazywa się jednostka pojemności elektrycznej?", a: "farad" }
+];
+
+let currentQuestion = 0;
+
+function loadQuestion() {
+  document.getElementById("question").textContent = questions[currentQuestion].q;
+}
+
+function checkAnswer() {
+  let answer = document.getElementById("answer").value.trim().toLowerCase();
+  let feedback = document.getElementById("feedback");
+  if (answer === questions[currentQuestion].a.toLowerCase()) {
+    feedback.textContent = "✅ Dobrze!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "❌ Źle! Poprawna odpowiedź: " + questions[currentQuestion].a;
+    feedback.style.color = "red";
+  }
+  currentQuestion = (currentQuestion + 1) % questions.length;
+  setTimeout(() => {
+    document.getElementById("answer").value = "";
+    loadQuestion();
+  }, 1500);
+}
+
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geografia – Pytania</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(#87ceeb, #ffffff);
+  position: relative;
+}
+#question-container {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  background-color: rgba(255,255,255,0.9);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #2196f3;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #1565c0; }
+
+/* Globusy */
+.globe {
+  position: absolute;
+  font-size: 30px;
+  animation: spin 8s linear infinite;
+  opacity: 0.7;
+}
+@keyframes spin {
+  0% { transform: translateY(0) rotate(0deg); opacity:0.7; }
+  50% { transform: translateY(-80vh) rotate(180deg); opacity:1; }
+  100% { transform: translateY(0) rotate(360deg); opacity:0.7; }
+}
+
+/* Chmury */
+.cloud {
+  position: absolute;
+  font-size: 50px;
+  animation: float linear infinite;
+  opacity: 0.5;
+}
+@keyframes float {
+  0% { transform: translateX(-10vw); }
+  100% { transform: translateX(110vw); }
+}
+
+/* Samoloty */
+.plane {
+  position: absolute;
+  font-size: 25px;
+  animation: fly linear infinite;
+}
+@keyframes fly {
+  0% { transform: translate(-10vw, 20vh) rotate(0deg); }
+  50% { transform: translate(110vw, 40vh) rotate(20deg); }
+  100% { transform: translate(-10vw, 20vh) rotate(0deg); }
+}
+
+/* Pulsujące punkty */
+.marker {
+  position: absolute;
+  font-size: 20px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity:1; }
+  50% { transform: scale(1.5); opacity:0.6; }
+  100% { transform: scale(1); opacity:1; }
+}
+</style>
+</head>
+<body>
+
+<div id="question-container">
+  <h2 id="question">Ładowanie pytania...</h2>
+  <input type="text" id="answer" placeholder="Twoja odpowiedź">
+  <br>
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="feedback"></div>
+  <br>
+  <button onclick="window.location.href='index.html'">⬅ Powrót do strony głównej</button>
+</div>
+
+<script>
+// Globusy
+for(let i=0; i<10; i++){
+  let globe = document.createElement('div');
+  globe.className = 'globe';
+  globe.textContent = '🌍';
+  globe.style.left = Math.random()*100 + 'vw';
+  globe.style.animationDuration = (6 + Math.random()*5) + 's';
+  document.body.appendChild(globe);
+}
+
+// Chmury
+for(let i=0; i<8; i++){
+  let cloud = document.createElement('div');
+  cloud.className = 'cloud';
+  cloud.textContent = '☁️';
+  cloud.style.top = Math.random()*50 + 'vh';
+  cloud.style.animationDuration = (15 + Math.random()*20) + 's';
+  document.body.appendChild(cloud);
+}
+
+// Samoloty
+for(let i=0; i<5; i++){
+  let plane = document.createElement('div');
+  plane.className = 'plane';
+  plane.textContent = '✈️';
+  plane.style.animationDuration = (10 + Math.random()*10) + 's';
+  plane.style.top = (10 + Math.random()*40) + 'vh';
+  document.body.appendChild(plane);
+}
+
+// Pulsujące markery
+for(let i=0; i<7; i++){
+  let marker = document.createElement('div');
+  marker.className = 'marker';
+  marker.textContent = '📍';
+  marker.style.left = Math.random()*90 + 'vw';
+  marker.style.top = Math.random()*70 + 'vh';
+  document.body.appendChild(marker);
+}
+
+// Pytania geograficzne
+const questions = [
+{ q: "Jak nazywa się największy ocean na Ziemi?", a: "ocean spokojny" },
+{ q: "Jak nazywa się najwyższy szczyt świata?", a: "mount everest" },
+{ q: "Jak nazywa się najdłuższa rzeka świata?", a: "nil" },
+{ q: "Jak nazywa się największe państwo pod względem powierzchni?", a: "rosja" },
+{ q: "Jak nazywa się najmniejsze państwo świata?", a: "watykan" },
+{ q: "Jak nazywa się stolica Polski?", a: "warszawa" },
+{ q: "Jak nazywa się stolica Francji?", a: "paryż" },
+{ q: "Jak nazywa się stolica Niemiec?", a: "berlin" },
+{ q: "Jak nazywa się stolica Włoch?", a: "rzym" },
+{ q: "Jak nazywa się stolica Hiszpanii?", a: "madryt" },
+{ q: "Jak nazywa się największa wyspa świata?", a: "grenlandia" },
+{ q: "Jak nazywa się najdłuższa rzeka Europy?", a: "wołga" },
+{ q: "Jak nazywa się najwyższy szczyt Europy?", a: "mont blanc" },
+{ q: "Jak nazywa się najwyższy szczyt Afryki?", a: "kilimandżaro" },
+{ q: "Jak nazywa się największe jezioro świata?", a: "morze kaspijskie" },
+{ q: "Jak nazywa się największe jezioro w Polsce?", a: "śniardwy" },
+{ q: "Jak nazywa się państwo, w którym leży Amazonka?", a: "brazylia" },
+{ q: "Jak nazywa się pustynia w Afryce Północnej?", a: "sahara" },
+{ q: "Jak nazywa się pustynia w Azji?", a: "gobi" },
+{ q: "Jak nazywa się morze oddzielające Europę od Afryki?", a: "śródziemne" },
+{ q: "Jak nazywa się morze w północnej części Europy?", a: "bałtyckie" },
+{ q: "Jak nazywa się największy archipelag świata?", a: "indonezyjski" },
+{ q: "Jak nazywa się państwo o największej liczbie ludności?", a: "chiny" },
+{ q: "Jak nazywa się państwo o najmniejszej liczbie ludności?", a: "watykan" },
+{ q: "Jak nazywa się najwyższa góra Afryki?", a: "kilimandżaro" },
+{ q: "Jak nazywa się najwyższa góra Ameryki Północnej?", a: "denali" },
+{ q: "Jak nazywa się najwyższa góra Ameryki Południowej?", a: "aconcagua" },
+{ q: "Jak nazywa się największe państwo w Afryce?", a: "algieria" },
+{ q: "Jak nazywa się państwo położone na Półwyspie Iberyjskim?", a: "hiszpania" },
+{ q: "Jak nazywa się najdłuższa rzeka Ameryki Południowej?", a: "amazonka" },
+{ q: "Jak nazywa się państwo z największą liczbą wysp?", a: "indonezja" },
+{ q: "Jak nazywa się państwo leżące na Półwyspie Skandynawskim?", a: "norwegia" },
+{ q: "Jak nazywa się państwo, w którym leży Kilimandżaro?", a: "tanzania" },
+{ q: "Jak nazywa się największe jezioro Afryki?", a: "wiktorii" },
+{ q: "Jak nazywa się największy kontynent świata?", a: "azja" },
+{ q: "Jak nazywa się najcieplejszy kontynent?", a: "afryka" },
+{ q: "Jak nazywa się najzimniejszy kontynent?", a: "antarktyda" },
+{ q: "Jak nazywa się największy półwysep świata?", a: "arabski" },
+{ q: "Jak nazywa się państwo w Ameryce Północnej graniczące z USA od południa?", a: "meksyk" },
+{ q: "Jak nazywa się państwo w Ameryce Północnej graniczące z USA od północy?", a: "kanada" },
+{ q: "Jak nazywa się morze leżące między Polską a Szwecją?", a: "bałtyckie" },
+{ q: "Jak nazywa się cieśnina między Azją a Ameryką Północną?", a: "beringa" },
+{ q: "Jak nazywa się wyspa położona na Morzu Śródziemnym należąca do Włoch?", a: "sardynia" },
+{ q: "Jak nazywa się największa wyspa Grecji?", a: "kreta" },
+{ q: "Jak nazywa się państwo leżące na półwyspie Apenińskim?", a: "włochy" },
+{ q: "Jak nazywa się najdłuższa rzeka w Europie?", a: "wołga" },
+{ q: "Jak nazywa się najdłuższa rzeka w Polsce?", a: "wisła" },
+{ q: "Jak nazywa się góra będąca najwyższym szczytem Polski?", a: "rysianka" },
+{ q: "Jak nazywa się najwyższy szczyt Tatr?", a: "rysianka" },
+{ q: "Jak nazywa się najdłuższa rzeka Azji?", a: "jangcy" },
+{ q: "Jak nazywa się największa wyspa Japonii?", a: "honsiu" },
+{ q: "Jak nazywa się najwyższy szczyt Kanady?", a: "denali" },
+{ q: "Jak nazywa się najdłuższa rzeka Ameryki Północnej?", a: "missisipi" },
+{ q: "Jak nazywa się najwyższa góra Ameryki Północnej?", a: "denali" },
+{ q: "Jak nazywa się państwo o największej liczbie wysp na świecie?", a: "indonezja" },
+{ q: "Jak nazywa się największa wyspa na Morzu Karaibskim?", a: "kuba" },
+{ q: "Jak nazywa się najwyższa góra Afryki Wschodniej?", a: "kilimandżaro" },
+{ q: "Jak nazywa się pustynia w północnej Afryce?", a: "sahara" },
+{ q: "Jak nazywa się pustynia w południowo-zachodniej Azji?", a: "arabska" },
+{ q: "Jak nazywa się rzeka przepływająca przez Egipt?", a: "nil" },
+{ q: "Jak nazywa się rzeka przepływająca przez Francję?", a: "sekwana" },
+{ q: "Jak nazywa się rzeka przepływająca przez Niemcy?", a: "ren" },
+{ q: "Jak nazywa się najwyższy szczyt Europy?", a: "mont blanc" },
+{ q: "Jak nazywa się najwyższy szczyt Afryki?", a: "kilimandżaro" },
+{ q: "Jak nazywa się najwyższy szczyt Ameryki Południowej?", a: "aconcagua" },
+{ q: "Jak nazywa się najdłuższa rzeka Ameryki Południowej?", a: "amazonka" },
+{ q: "Jak nazywa się państwo, którego stolicą jest Kair?", a: "egipt" },
+{ q: "Jak nazywa się państwo, którego stolicą jest Tokio?", a: "japonia" },
+{ q: "Jak nazywa się państwo, którego stolicą jest Canberra?", a: "australia" },
+{ q: "Jak nazywa się państwo, którego stolicą jest Ottawa?", a: "kanada" },
+{ q: "Jak nazywa się największe jezioro w Afryce?", a: "wiktorii" },
+{ q: "Jak nazywa się najwyższy szczyt Azji?", a: "mount everest" },
+{ q: "Jak nazywa się najwyższy szczyt Ameryki Północnej?", a: "denali" },
+{ q: "Jak nazywa się największe jezioro w Europie?", a: "ładoga" },
+{ q: "Jak nazywa się największa wyspa Norwegii?", a: "spitsbergen" }
+];
+
+let currentQuestion = 0;
+
+function loadQuestion() {
+  document.getElementById("question").textContent = questions[currentQuestion].q;
+}
+
+function checkAnswer() {
+  let answer = document.getElementById("answer").value.trim().toLowerCase();
+  let feedback = document.getElementById("feedback");
+  if (answer === questions[currentQuestion].a.toLowerCase()) {
+    feedback.textContent = "✅ Dobrze!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "❌ Źle! Poprawna odpowiedź: " + questions[currentQuestion].a;
+    feedback.style.color = "red";
+  }
+  currentQuestion = (currentQuestion + 1) % questions.length;
+  setTimeout(() => {
+    document.getElementById("answer").value = "";
+    loadQuestion();
+  }, 1500);
+}
+
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historia – Pytania</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #fff7e6, #ffd480);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+    }
+    #question-container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      background-color: rgba(255,255,255,0.95);
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+    input {
+      padding: 10px;
+      width: 80%;
+      margin-top: 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: #ff9933;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #e68a00;
+    }
+    #feedback {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    /* animacje – np. lecące pergaminy */
+    .scroll {
+      position: absolute;
+      width: 40px;
+      height: 60px;
+      background: #deb887;
+      border: 2px solid #8b4513;
+      border-radius: 5px;
+      animation: fall linear infinite;
+      opacity: 0.7;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-100px) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+<div id="question-container">
+  <h2 id="question">Ładowanie pytania...</h2>
+  <input type="text" id="answer" placeholder="Twoja odpowiedź">
+  <br>
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="feedback"></div>
+  <br>
+  <button onclick="window.location.href='index.html'">⬅ Powrót do strony głównej</button>
+</div>
+
+
+  <script>
+const questions = [
+{q:"W którym roku odkryto Amerykę?", a:"1492"},
+{q:"Kto był pierwszym królem Polski?", a:"Mieszko I"},
+{q:"Jak nazywała się bitwa stoczona w 1410 roku?", a:"Grunwald"},
+{q:"Kto był władcą Polski podczas bitwy pod Wiedniem w 1683 roku?", a:"Jan III Sobieski"},
+{q:"W którym roku uchwalono Konstytucję 3 Maja?", a:"1791"},
+{q:"Kiedy wybuchła II wojna światowa?", a:"1939"},
+{q:"Kto dowodził wojskami polskimi podczas Bitwy Warszawskiej 1920 roku?", a:"Józef Piłsudski"},
+{q:"Kto był władcą Polski w 966 roku?", a:"Mieszko I"},
+{q:"Jak nazywała się pierwsza stolica Polski?", a:"Gniezno"},
+{q:"W którym roku podpisano Traktat Wersalski?", a:"1919"},
+{q:"Kto był pierwszym prezydentem II Rzeczypospolitej?", a:"Gabriel Narutowicz"},
+{q:"Jak nazywał się wódz powstania kościuszkowskiego?", a:"Tadeusz Kościuszko"},
+{q:"Kiedy miało miejsce powstanie listopadowe?", a:"1830"},
+{q:"Kiedy miało miejsce powstanie styczniowe?", a:"1863"},
+{q:"Kto był królem Polski podczas bitwy pod Grunwaldem?", a:"Władysław II Jagiełło"},
+{q:"Jak nazywa się najdłuższa rzeka w Polsce?", a:"Wisła"},
+{q:"W którym roku Polska odzyskała niepodległość?", a:"1918"},
+{q:"Kto był twórcą państwa Wielkiego Mogołów w Indiach?", a:"Babur"},
+{q:"Kto był cesarzem Francji w latach 1804-1814?", a:"Napoleon Bonaparte"},
+{q:"W którym roku miała miejsce rewolucja francuska?", a:"1789"},
+{q:"Kto był władcą Rosji podczas wojny z Napoleone?", a:"Aleksander I"},
+{q:"Jak nazywała się bitwa, która zakończyła wojnę stuletnią?", a:"Castillon"},
+{q:"W którym roku zakończyła się II wojna światowa?", a:"1945"},
+{q:"Kto był premierem Wielkiej Brytanii podczas II wojny światowej?", a:"Winston Churchill"},
+{q:"Jak nazywał się przywódca ZSRR podczas II wojny światowej?", a:"Józef Stalin"},
+{q:"Kiedy wybuchła wojna trzydziestoletnia?", a:"1618"},
+{q:"Kto był wodzem wojsk polskich podczas bitwy pod Wiedniem?", a:"Jan III Sobieski"},
+{q:"W którym roku podpisano Unię Lubelską?", a:"1569"},
+{q:"Kto był królem Polski w czasie rozbiorów?", a:"Stanisław August Poniatowski"},
+{q:"Kiedy wybuchło powstanie warszawskie?", a:"1944"},
+{q:"Kto był twórcą nowoczesnej Polski po I wojnie światowej?", a:"Józef Piłsudski"},
+{q:"W którym roku podpisano pokój w Verdun?", a:"843"},
+{q:"Kto był papieżem podczas koronacji Karola Wielkiego?", a:"Leon III"},
+{q:"Jak nazywała się pierwsza konstytucja na świecie?", a:"Konstytucja USA"},
+{q:"Kiedy odbyła się bitwa pod Waterloo?", a:"1815"},
+{q:"Kto był królem Szwecji podczas wojny trzydziestoletniej?", a:"Gustaw II Adolf"},
+{q:"W którym roku powstała Organizacja Narodów Zjednoczonych?", a:"1945"},
+{q:"Kto był twórcą teorii heliocentrycznej?", a:"Mikołaj Kopernik"},
+{q:"Kiedy miała miejsce rewolucja przemysłowa?", a:"XVIII wiek"},
+{q:"Kto był przywódcą rewolucji bolszewickiej?", a:"Włodzimierz Lenin"},
+{q:"Kiedy podpisano traktat pokojowy w Tylży?", a:"1807"},
+{q:"Kto był królem Anglii podczas bitwy pod Hastings?", a:"Wilhelm Zdobywca"},
+{q:"Jak nazywał się zakon rycerski w średniowiecznej Europie?", a:"Templariusze"},
+{q:"Kiedy powstało Cesarstwo Rzymskie?", a:"27 p.n.e."},
+{q:"Kto był pierwszym cesarzem Rzymu?", a:"August"},
+{q:"Kiedy upadło Cesarstwo Zachodniorzymskie?", a:"476"},
+{q:"Kto był wodzem wojsk francuskich podczas bitwy pod Austerlitz?", a:"Napoleon Bonaparte"},
+{q:"W którym roku odkryto Australię?", a:"1606"},
+{q:"Kto był twórcą państwa Osmanów?", a:"Osman I"},
+{q:"Kiedy odbyła się bitwa pod Lepanto?", a:"1571"},
+{q:"Kto był królem Francji podczas rewolucji?", a:"Ludwik XVI"},
+{q:"Kiedy wprowadzono Deklarację Praw Człowieka i Obywatela?", a:"1789"},
+{q:"Kto był wodzem wojsk polskich w bitwie pod Kircholmem?", a:"Jan Karol Chodkiewicz"},
+{q:"Kiedy miała miejsce bitwa pod Racławicami?", a:"1794"},
+{q:"Kto był wodzem wojsk polskich w bitwie pod Maciejowicami?", a:"Tadeusz Kościuszko"},
+{q:"Kiedy powstało Zjednoczone Królestwo Wielkiej Brytanii?", a:"1707"},
+{q:"Kto był przywódcą rewolucji amerykańskiej?", a:"George Washington"},
+{q:"Kiedy uchwalono Deklarację Niepodległości USA?", a:"1776"},
+{q:"Kto był cesarzem Niemiec w 1871 roku?", a:"Wilhelm I"},
+{q:"Kiedy miało miejsce powstanie kościuszkowskie?", a:"1794"},
+{q:"Kto był władcą Polski w 1000 roku?", a:"Bolesław Chrobry"},
+{q:"Kiedy odbyła się bitwa pod Cedynią?", a:"972"},
+{q:"Kto był pierwszym królem Polski koronowanym?", a:"Bolesław Chrobry"},
+{q:"Kiedy rozpoczęła się wojna francusko-pruska?", a:"1870"},
+{q:"Kto był cesarzem Austrii w 1848 roku?", a:"Ferdynand I"},
+{q:"Kiedy powstało państwo węgierskie?", a:"1000"},
+{q:"Kto był twórcą dynastii Kapetyngów?", a:"Hugon Kapetyng"},
+{q:"Kiedy podpisano pokój w Westfalii?", a:"1648"},
+{q:"Kto był wodzem wojsk szwedzkich podczas wojny trzydziestoletniej?", a:"Gustaw II Adolf"},
+{q:"Kiedy powstało Cesarstwo Bizantyjskie?", a:"330"},
+{q:"Kto był cesarzem Bizancjum w 527 roku?", a:"Justynian I"},
+{q:"Kiedy odbyła się bitwa pod Poitiers w 732 roku?", a:"732"},
+{q:"Kto był wodzem Franków podczas bitwy pod Poitiers?", a:"Karol Młot"},
+{q:"Kiedy powstała Liga Narodów?", a:"1920"},
+{q:"Kto był pierwszym prezydentem USA?", a:"George Washington"},
+{q:"Kiedy miała miejsce rewolucja październikowa w Rosji?", a:"1917"},
+{q:"Kto był przywódcą Francji podczas I wojny światowej?", a:"Raymond Poincaré"},
+{q:"Kiedy wybuchła I wojna światowa?", a:"1914"},
+{q:"Kiedy zakończyła się I wojna światowa?", a:"1918"},
+{q:"Kto był kanclerzem Niemiec podczas I wojny światowej?", a:"Otto von Bismarck"},
+{q:"Kiedy miała miejsce bitwa pod Somme?", a:"1916"},
+{q:"Kto był wodzem wojsk polskich podczas bitwy pod Monte Cassino?", a:"Władysław Anders"},
+{q:"Kiedy powstało ZSRR?", a:"1922"},
+{q:"Kto był wodzem Armii Czerwonej w czasie II wojny światowej?", a:"Gieorgij Żukow"},
+{q:"Kiedy wybuchła wojna polsko-bolszewicka?", a:"1919"},
+{q:"Kto był wodzem wojsk polskich w bitwie warszawskiej?", a:"Józef Piłsudski"},
+{q:"Kiedy powstała Solidarność?", a:"1980"},
+{q:"Kto był pierwszym prezydentem III RP?", a:"Wojciech Jaruzelski"},
+{q:"Kiedy upadł Mur Berliński?", a:"1989"},
+{q:"Kto był papieżem w 1978 roku?", a:"Jan Paweł II"},
+{q:"Kiedy odbyła się bitwa pod Stalingradem?", a:"1942"},
+{q:"Kto był wodzem wojsk niemieckich podczas II wojny światowej?", a:"Adolf Hitler"},
+{q:"Kiedy podpisano układ Monachijski?", a:"1938"},
+{q:"Kto był cesarzem Niemiec podczas I wojny światowej?", a:"Wilhelm II"},
+{q:"Kiedy odbyła się bitwa pod Hastings?", a:"1066"},
+{q:"Kto był królem Anglii po Wilhelmie Zdobywcy?", a:"Wilhelm II"},
+{q:"Kiedy odbyła się wojna stuletnia?", a:"1337"},
+{q:"Kto był wodzem wojsk angielskich podczas wojny stuletniej?", a:"Edward III"},
+{q:"Kiedy odbyła się bitwa pod Azincourt?", a:"1415"},
+{q:"Kto dowodził wojskami francuskimi w bitwie pod Orleanem?", a:"Joanna d’Arc"},
+{q:"Kiedy powstało Królestwo Węgier?", a:"1000"},
+{q:"Kto był królem Węgier w 1000 roku?", a:"Święty Stefan"},
+{q:"Kiedy powstało Królestwo Czech?", a:"1198"},
+{q:"Kto był pierwszym królem Czech?", a:"Przemysł Ottokar I"},
+{q:"Kiedy miała miejsce bitwa pod Termopilami?", a:"480 p.n.e."},
+{q:"Kto był wodzem Spartan podczas bitwy pod Termopilami?", a:"Leonidas"},
+{q:"Kiedy odbyła się bitwa pod Maratonem?", a:"490 p.n.e."},
+{q:"Kto dowodził wojskami Ateńczyków podczas bitwy pod Maratonem?", a:"Miltiades"},
+{q:"Kiedy powstało Cesarstwo Perskie?", a:"550 p.n.e."},
+{q:"Kto był założycielem dynastii Achemenidów?", a:"Kyrus II Wielki"},
+{q:"Kiedy miało miejsce zdobycie Kartaginy przez Rzymian?", a:"146 p.n.e."},
+{q:"Kto był wodzem Hannibala podczas II wojny punickiej?", a:"Hannibal"},
+{q:"Kiedy odbyła się bitwa pod Kaną?", a:"216 p.n.e."},
+{q:"Kto był pierwszym cesarzem Chin?", a:"Qin Shi Huang"},
+{q:"Kiedy powstała Wielka Piramida w Gizie?", a:"około 2560 p.n.e."},
+{q:"Kto był faraonem Egiptu w czasie budowy Wielkiej Piramidy?", a:"Cheops"},
+{q:"Kiedy powstało Imperium Rzymskie?", a:"27 p.n.e."},
+{q:"Kto był wodzem wojsk rzymskich podczas podboju Galii?", a:"Juliusz Cezar"},
+{q:"Kiedy miała miejsce bitwa pod Alezją?", a:"52 p.n.e."},
+{q:"Kto był wodzem Galów podczas bitwy pod Alezją?", a:"Wercyngetoryks"},
+{q:"Kiedy rozpoczęła się wojna peloponeska?", a:"431 p.n.e."},
+{q:"Kto był wodzem Sparty w wojnie peloponeskiej?", a:"Kleon"},
+{q:"Kiedy upadł Rzym Zachodni?", a:"476"},
+{q:"Kto był ostatnim cesarzem Rzymu Zachodniego?", a:"Romulus Augustulus"},
+{q:"Kiedy powstał kalifat Abbasydów?", a:"750"},
+{q:"Kto był założycielem kalifatu Abbasydów?", a:"Abu al-Abbas as-Saffah"},
+{q:"Kiedy miało miejsce zdobycie Konstantynopola przez Turków?", a:"1453"},
+{q:"Kto był sułtanem w czasie zdobycia Konstantynopola?", a:"Mehmed II"},
+{q:"Kiedy odkryto drogę morską do Indii?", a:"1498"},
+{q:"Kto odkrył drogę morską do Indii?", a:"Vasco da Gama"},
+{q:"Kiedy odkryto Amerykę Północną?", a:"1492"},
+{q:"Kto odkrył Amerykę Północną?", a:"Krzysztof Kolumb"},
+{q:"Kiedy rozpoczęła się reformacja?", a:"1517"},
+{q:"Kto był twórcą reformacji?", a:"Marcin Luter"},
+{q:"Kiedy podpisano pokój westfalski?", a:"1648"},
+{q:"Kto był królem Francji podczas wojny trzydziestoletniej?", a:"Ludwik XIII"},
+{q:"Kiedy odbyła się bitwa pod Wiedniem?", a:"1683"},
+{q:"Kto dowodził wojskami polskimi w bitwie pod Wiedniem?", a:"Jan III Sobieski"},
+{q:"Kiedy rozpoczęła się wojna siedmioletnia?", a:"1756"},
+{q:"Kto był cesarzem Austrii podczas wojny siedmioletniej?", a:"Franciszek I"},
+{q:"Kiedy uchwalono konstytucję 3 maja?", a:"1791"},
+{q:"Kto był królem Polski w czasie uchwalenia konstytucji 3 maja?", a:"Stanisław August Poniatowski"},
+{q:"Kiedy miało miejsce powstanie kościuszkowskie?", a:"1794"},
+{q:"Kto był wodzem powstania kościuszkowskiego?", a:"Tadeusz Kościuszko"},
+{q:"Kiedy rozpoczęła się wojna napoleońska?", a:"1803"},
+{q:"Kto był wodzem wojsk francuskich podczas wojen napoleońskich?", a:"Napoleon Bonaparte"},
+{q:"Kiedy miała miejsce bitwa pod Waterloo?", a:"1815"},
+{q:"Kto dowodził wojskami brytyjskimi pod Waterloo?", a:"Arthur Wellesley"},
+{q:"Kiedy powstała Polska po rozbiorach?", a:"1918"},
+{q:"Kto był naczelnikiem państwa polskiego po odzyskaniu niepodległości?", a:"Józef Piłsudski"},
+{q:"Kiedy wybuchła I wojna światowa?", a:"1914"},
+{q:"Kiedy zakończyła się I wojna światowa?", a:"1918"},
+{q:"Kto był kanclerzem Niemiec podczas I wojny światowej?", a:"Theobald von Bethmann-Hollweg"},
+{q:"Kiedy powstała Liga Narodów?", a:"1920"},
+{q:"Kiedy wybuchła II wojna światowa?", a:"1939"},
+{q:"Kto był wodzem wojsk niemieckich podczas II wojny światowej?", a:"Adolf Hitler"},
+{q:"Kiedy podpisano układ Monachijski?", a:"1938"},
+{q:"Kiedy zakończyła się II wojna światowa?", a:"1945"},
+{q:"Kto był przywódcą ZSRR podczas II wojny światowej?", a:"Józef Stalin"},
+{q:"Kiedy powstało ONZ?", a:"1945"},
+{q:"Kto był pierwszym sekretarzem generalnym ONZ?", a:"Trygve Lie"},
+{q:"Kiedy powstała Unia Europejska?", a:"1993"},
+{q:"Kto był pierwszym przewodniczącym Komisji Europejskiej?", a:"Jacques Delors"}
+];
+
+
+
+    let currentQuestion;
+
+    function getRandomQuestion() {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      currentQuestion = questions[randomIndex];
+      document.getElementById("question").textContent = currentQuestion.q;
+      document.getElementById("answer").value = "";
+      document.getElementById("feedback").textContent = "";
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById("answer").value.trim();
+      if(userAnswer.toLowerCase() === currentQuestion.a.toLowerCase()) {
+        document.getElementById("feedback").textContent = "✅ Dobrze!";
+        document.getElementById("feedback").style.color = "green";
+      } else {
+        document.getElementById("feedback").textContent = "❌ Źle! Poprawna odpowiedź: " + currentQuestion.a;
+        document.getElementById("feedback").style.color = "red";
+      }
+      setTimeout(getRandomQuestion, 2000);
+    }
+
+    // Animacje – pergaminy
+    function createScroll() {
+      const scroll = document.createElement("div");
+      scroll.classList.add("scroll");
+      scroll.style.left = Math.random() * window.innerWidth + "px";
+      scroll.style.animationDuration = (5 + Math.random() * 5) + "s";
+      document.body.appendChild(scroll);
+      setTimeout(() => scroll.remove(), 10000);
+    }
+    setInterval(createScroll, 800);
+
+    // Start
+    getRandomQuestion();
+  </script>
+</body>
+</html>
